@@ -1,10 +1,10 @@
 package libp2p
 
 import (
-	config "github.com/ipfs/go-ipfs/config"
-	"github.com/libp2p/go-libp2p-core/peer"
-
+	"github.com/ipfs/go-ipfs/config"
 	"github.com/libp2p/go-libp2p"
+	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/libp2p/go-libp2p/p2p/host/autorelay"
 	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 )
 
@@ -43,30 +43,25 @@ func RelayService(enable bool, relayOpts config.RelayService) func() (opts Libp2
 	}
 }
 
-func StaticRelays(relays []string) func() (opts Libp2pOpts, err error) {
+func AutoRelay(relays []string, peerChan <-chan peer.AddrInfo) interface{} {
 	return func() (opts Libp2pOpts, err error) {
-		staticRelays := make([]peer.AddrInfo, 0, len(relays))
-		for _, s := range relays {
-			var addr *peer.AddrInfo
-			addr, err = peer.AddrInfoFromString(s)
-			if err != nil {
-				return
+		var autoRelayOpts []autorelay.Option
+		if len(relays) > 0 {
+			static := make([]peer.AddrInfo, 0, len(relays))
+			for _, s := range relays {
+				var addr *peer.AddrInfo
+				addr, err = peer.AddrInfoFromString(s)
+				if err != nil {
+					return
+				}
+				static = append(static, *addr)
 			}
-			staticRelays = append(staticRelays, *addr)
+			autoRelayOpts = append(autoRelayOpts, autorelay.WithStaticRelays(static))
 		}
-		if len(staticRelays) > 0 {
-			opts.Opts = append(opts.Opts, libp2p.StaticRelays(staticRelays))
+		if peerChan != nil {
+			autoRelayOpts = append(autoRelayOpts, autorelay.WithPeerSource(peerChan))
 		}
-		return
-	}
-}
-
-func AutoRelay(addDefaultRelays bool) func() (opts Libp2pOpts, err error) {
-	return func() (opts Libp2pOpts, err error) {
-		opts.Opts = append(opts.Opts, libp2p.EnableAutoRelay())
-		if addDefaultRelays {
-			opts.Opts = append(opts.Opts, libp2p.DefaultStaticRelays())
-		}
+		opts.Opts = append(opts.Opts, libp2p.EnableAutoRelay(autoRelayOpts...))
 		return
 	}
 }
