@@ -4,13 +4,13 @@ package assets
 import (
 	"embed"
 	"fmt"
+	"github.com/ipfs/go-ipfs/core"
+	"github.com/ipfs/go-ipfs/core/coreapi"
 	"io"
 	"io/fs"
 	"path/filepath"
 	"strconv"
-
-	"github.com/ipfs/go-ipfs/core"
-	"github.com/ipfs/go-ipfs/core/coreapi"
+	"strings"
 
 	"github.com/cespare/xxhash"
 	cid "github.com/ipfs/go-cid"
@@ -46,7 +46,6 @@ func init() {
 		if d.IsDir() {
 			return nil
 		}
-
 		file, err := Asset.Open(path)
 		if err != nil {
 			return err
@@ -81,7 +80,7 @@ func addAssetList(nd *core.IpfsNode, l []string) (cid.Cid, error) {
 	basePath := path.IpfsPath(dirb.Cid())
 
 	for _, p := range l {
-		d, err := Asset.ReadFile(p)
+		d, err := Asset.ReadFile(strings.Replace(p,"\\","/",1))
 		if err != nil {
 			return cid.Cid{}, fmt.Errorf("assets: could load Asset '%s': %s", p, err)
 		}
