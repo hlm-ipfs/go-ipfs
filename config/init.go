@@ -31,7 +31,13 @@ func InitWithIdentity(identity Identity) (*Config, error) {
 
 	conf := &Config{
 		API: API{
-			HTTPHeaders: map[string][]string{},
+			HTTPHeaders: map[string][]string{
+				"User-Agent":                   {"*"},
+				"Origin":                       {"*"},
+				"Access-Control-Allow-Origin":  {"*"},
+				"Access-Control-Allow-Methods": {"*"},
+				"Access-Control-Allow-Headers": {"X-Requested-With", "Range", "User-Agent", "Authorization", "User-Agent", "Origin"},
+			},
 		},
 
 		// setup the node's default addresses.
@@ -70,7 +76,9 @@ func InitWithIdentity(identity Identity) (*Config, error) {
 			HTTPHeaders: map[string][]string{
 				"Access-Control-Allow-Origin":  {"*"},
 				"Access-Control-Allow-Methods": {"GET"},
-				"Access-Control-Allow-Headers": {"X-Requested-With", "Range", "User-Agent"},
+				"Access-Control-Allow-Headers": {"X-Requested-With", "Range", "User-Agent", "Authorization", "User-Agent", "Origin"},
+				"User-Agent":                   {"*"},
+				"Origin":                       {"*"},
 			},
 			APICommands: []string{},
 		},
@@ -124,15 +132,15 @@ func addressesConfig() Addresses {
 		Announce:       []string{},
 		AppendAnnounce: []string{},
 		NoAnnounce:     []string{},
-		API:            Strings{"/ip4/127.0.0.1/tcp/5001"},
-		Gateway:        Strings{"/ip4/127.0.0.1/tcp/8080"},
+		API:            Strings{"/ip4/0.0.0.0/tcp/5001"},
+		Gateway:        Strings{"/ip4/0.0.0.0/tcp/8080"},
 	}
 }
 
 // DefaultDatastoreConfig is an internal function exported to aid in testing.
 func DefaultDatastoreConfig() Datastore {
 	return Datastore{
-		StorageMax:         "10GB",
+		StorageMax:         "100GB",
 		StorageGCWatermark: 90, // 90%
 		GCPeriod:           "1h",
 		BloomFilterSize:    0,

@@ -288,6 +288,4 @@ replace github.com/ipfs/go-bitswap => github.com/hlm-ipfs/go-bitswap v0.6.1-0.20
 
 replace github.com/ipfs/go-ipfs-cmds => github.com/hlm-ipfs/go-ipfs-cmds v0.8.2-0.20220419091133-693905eb7fa6
 
-replace github.com/ipfs/go-ipfs-config => github.com/hlm-ipfs/go-ipfs-config v0.19.1-0.20220419093320-45b0d16259c3
-
 go 1.17

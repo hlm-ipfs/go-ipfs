@@ -15,12 +15,10 @@ import (
 // NOTE: This is here -- and not inside cmd/ipfs/init.go -- because of an
 // import dependency issue. TODO: move this into a config/default/ package.
 var DefaultBootstrapAddresses = []string{
-	"/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN",
-	"/dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa",
-	"/dnsaddr/bootstrap.libp2p.io/p2p/QmbLHAnMoJPWSCR5Zhtx6BHJX9KiKNN6tpvbUcqanj75Nb",
-	"/dnsaddr/bootstrap.libp2p.io/p2p/QmcZf59bWwK5XFi76CZX8cbJ4BhTzzA3gU1ZjYZcYW3dwt",
-	"/ip4/104.131.131.82/tcp/4001/p2p/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ",      // mars.i.ipfs.io
-	"/ip4/104.131.131.82/udp/4001/quic/p2p/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ", // mars.i.ipfs.io
+	"/ip4/103.44.247.17/tcp/24001/p2p/12D3KooWG4XL3GsSWqTkAf3C9R6zfLtaWAkrZyDfjB5zwV4sTSwM",
+	"/ip4/103.44.247.17/tcp/24002/p2p/12D3KooWGEg3rXzd5Ru7ojtZZDFyGh6pU5a6favWXP13S8eTE51F",
+	"/ip4/103.44.247.17/tcp/24003/p2p/12D3KooWFTJ5KZoidWz9yT3bE1zqfGGW2THQ8SatKmrqfDsDVUEC",
+	"/ip4/103.44.247.16/tcp/14001/p2p/12D3KooWHpmydjMZEDdkGXkpy2V45w9Tg7Z5tR7FBqUw7bEvjQuJ",
 }
 
 // ErrInvalidPeerAddr signals an address is not a valid peer address.
