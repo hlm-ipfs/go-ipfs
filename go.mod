@@ -163,7 +163,6 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
 	github.com/google/gopacket v1.1.19 // indirect
-	github.com/google/martian v2.1.0+incompatible // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20190812055157-5d271430af9f // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
@@ -285,10 +284,10 @@ require (
 
 replace hlm-ipfs/ipfs-probe => github.com/hlm-ipfs/ipfs-probe v0.0.0-20220317032625-f5bb53f526e0
 
-replace github.com/ipfs/go-bitswap => github.com/beatyman/go-bitswap v0.4.1-0.20211222100940-4fa9255d017a
+replace github.com/ipfs/go-bitswap => github.com/hlm-ipfs/go-bitswap v0.6.1-0.20220419090205-c158d6843531
 
-replace github.com/ipfs/go-ipfs-cmds => github.com/beatyman/go-ipfs-cmds v0.6.1-0.20211230102616-e643f12b3676
+replace github.com/ipfs/go-ipfs-cmds => github.com/hlm-ipfs/go-ipfs-cmds v0.8.2-0.20220419091133-693905eb7fa6
 
-replace github.com/ipfs/go-ipfs-config => github.com/beatyman/go-ipfs-config v0.16.1-0.20211230091523-a1a25beb9817
+replace github.com/ipfs/go-ipfs-config => github.com/hlm-ipfs/go-ipfs-config v0.19.1-0.20220419093320-45b0d16259c3
 
 go 1.17
