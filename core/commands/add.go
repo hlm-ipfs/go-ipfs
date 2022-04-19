@@ -269,6 +269,11 @@ only-hash, and progress/status related flags) will change the final hash.
 			}
 			go func() {
 				var err error
+				defer func() {
+					if r := recover(); r != nil {
+						fmt.Println("Recovered in f", r)
+					}
+				}()
 				defer close(events)
 				_, err = api.Unixfs().Add(req.Context, filesNode, opts...)
 				errCh <- err
