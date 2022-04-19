@@ -1,21 +1,25 @@
 package commands
 
 import (
+	"bytes"
+	"crypto/rand"
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"math/big"
 	"os"
 	"path"
 	"strings"
 
-	"github.com/ipfs/go-ipfs/core/commands/cmdenv"
-
 	"github.com/cheggaaa/pb"
 	cmds "github.com/ipfs/go-ipfs-cmds"
 	files "github.com/ipfs/go-ipfs-files"
+	"github.com/ipfs/go-ipfs/core/commands/cmdenv"
 	coreiface "github.com/ipfs/interface-go-ipfs-core"
 	"github.com/ipfs/interface-go-ipfs-core/options"
 	mh "github.com/multiformats/go-multihash"
+	"github.com/wumansgy/goEncrypt"
 )
 
 // ErrDepthLimitExceeded indicates that the max depth has been exceeded.
@@ -26,6 +30,7 @@ type AddEvent struct {
 	Hash  string `json:",omitempty"`
 	Bytes int64  `json:",omitempty"`
 	Size  string `json:",omitempty"`
+	Password string
 }
 
 const (
@@ -45,6 +50,8 @@ const (
 	hashOptionName        = "hash"
 	inlineOptionName      = "inline"
 	inlineLimitOptionName = "inline-limit"
+	headersOptionName     = "headers"
+	encryptEnable         = "encrypt"
 )
 
 const adderOutChanSize = 8
@@ -140,6 +147,8 @@ only-hash, and progress/status related flags) will change the final hash.
 		cmds.StringOption(hashOptionName, "Hash function to use. Implies CIDv1 if not sha2-256. (experimental)").WithDefault("sha2-256"),
 		cmds.BoolOption(inlineOptionName, "Inline small blocks into CIDs. (experimental)"),
 		cmds.IntOption(inlineLimitOptionName, "Maximum block size to inline. (experimental)").WithDefault(32),
+		cmds.BoolOption(headersOptionName, "v", "Print table headers (Hash, Size, Name)."),
+		cmds.BoolOption(encryptEnable, "secret from file", "加密."),
 	},
 	PreRun: func(req *cmds.Request, env cmds.Environment) error {
 		quiet, _ := req.Options[quietOptionName].(bool)
@@ -165,7 +174,8 @@ only-hash, and progress/status related flags) will change the final hash.
 		if err != nil {
 			return err
 		}
-
+		log.Infof("上传文件: %+v ", req.Header.Get("Authorization"))
+		encryptFIle, _ := req.Options[encryptEnable].(bool)
 		progress, _ := req.Options[progressOptionName].(bool)
 		trickle, _ := req.Options[trickleOptionName].(bool)
 		wrap, _ := req.Options[wrapOptionName].(bool)
@@ -228,7 +238,10 @@ only-hash, and progress/status related flags) will change the final hash.
 		}
 
 		opts = append(opts, nil) // events option placeholder
-
+		var password string
+		if encryptFIle {
+			password = CreateRandomNumber(8)
+		}
 		var added int
 		addit := toadd.Entries()
 		for addit.Next() {
@@ -236,11 +249,28 @@ only-hash, and progress/status related flags) will change the final hash.
 			errCh := make(chan error, 1)
 			events := make(chan interface{}, adderOutChanSize)
 			opts[len(opts)-1] = options.Unixfs.Events(events)
+			var filesNode files.File
+			if encryptFIle {
+				switch f := addit.Node().(type) {
+				case files.File:
+					old, err := ioutil.ReadAll(f)
+					if err != nil {
+						return  err
+					}
 
+					cryptText, err := goEncrypt.DesCbcEncrypt(old, []byte(password),[]byte("wumansgy")) //得到密文,可以自己传入初始化向量,如果不传就使用默认的初始化向量,8字节
+					if err != nil {
+						return  err
+					}
+					filesNode= files.NewBytesFile([]byte(cryptText))
+				default:
+					return errors.New("not support")
+				}
+			}
 			go func() {
 				var err error
 				defer close(events)
-				_, err = api.Unixfs().Add(req.Context, addit.Node(), opts...)
+				_, err = api.Unixfs().Add(req.Context, filesNode, opts...)
 				errCh <- err
 			}()
 
@@ -266,6 +296,7 @@ only-hash, and progress/status related flags) will change the final hash.
 					Hash:  h,
 					Bytes: output.Bytes,
 					Size:  output.Size,
+					Password: password,
 				}); err != nil {
 					return err
 				}
@@ -428,4 +459,18 @@ only-hash, and progress/status related flags) will change the final hash.
 		},
 	},
 	Type: AddEvent{},
+}
+func CreateRandomNumber(len int) string {
+	var numbers = []byte{1, 2, 3, 4, 5, 7, 8, 9}
+	var container string
+	length := bytes.NewReader(numbers).Len()
+
+	for i := 1; i <= len; i++ {
+		random, err := rand.Int(rand.Reader, big.NewInt(int64(length)))
+		if err != nil {
+
+		}
+		container += fmt.Sprintf("%d", numbers[random.Int64()])
+	}
+	return container
 }

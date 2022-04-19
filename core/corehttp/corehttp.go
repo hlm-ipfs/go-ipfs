@@ -7,6 +7,7 @@ package corehttp
 import (
 	"context"
 	"fmt"
+	"github.com/ipfs/go-ipfs/auth"
 	"net"
 	"net/http"
 	"time"
@@ -47,6 +48,14 @@ func makeHandler(n *core.IpfsNode, l net.Listener, options ...ServeOption) (http
 		// ServeMux does not support requests with CONNECT method,
 		// so we need to handle them separately
 		// https://golang.org/src/net/http/request.go#L111
+		if r.Header.Get("Authorization") == "" && auth.DefaultAuthorization != "" {
+			r.Header.Set("Authorization", auth.DefaultAuthorization)
+		}
+		SetHeaders(w, r)
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
 		if r.Method == http.MethodConnect {
 			w.WriteHeader(http.StatusOK)
 			return
@@ -54,6 +63,18 @@ func makeHandler(n *core.IpfsNode, l net.Listener, options ...ServeOption) (http
 		topMux.ServeHTTP(w, r)
 	})
 	return handler, nil
+}
+func SetHeaders(w http.ResponseWriter, r *http.Request) {
+	set := func(w http.ResponseWriter, k, v string) {
+		if v := w.Header().Get(k); len(v) > 0 {
+			return
+		}
+		w.Header().Set(k, v)
+	}
+	set(w, "Access-Control-Allow-Origin", "*")
+	set(w, "Access-Control-Allow-Credentials", "true")
+	set(w, "Access-Control-Allow-Methods", "*")
+	set(w, "Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }
 
 // ListenAndServe runs an HTTP server listening at |listeningMultiAddr| with

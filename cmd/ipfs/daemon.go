@@ -41,6 +41,7 @@ import (
 	manet "github.com/multiformats/go-multiaddr/net"
 	prometheus "github.com/prometheus/client_golang/prometheus"
 	promauto "github.com/prometheus/client_golang/prometheus/promauto"
+	probe "hlm-ipfs/ipfs-probe"
 )
 
 const (
@@ -525,7 +526,9 @@ func daemonFunc(req *cmds.Request, re cmds.ResponseEmitter, env cmds.Environment
 
 	// initialize metrics collector
 	prometheus.MustRegister(&corehttp.IpfsNodeCollector{Node: node})
-
+	go func() {
+		probe.NewCollector(cctx.Context(),node,"http://103.44.247.16:31686/edmc/edmcNode/Report")
+	}()
 	// start MFS pinning thread
 	startPinMFS(daemonConfigPollInterval, cctx, &ipfsPinMFSNode{node})
 

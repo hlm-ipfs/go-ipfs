@@ -3,9 +3,13 @@ package commands
 import (
 	"bufio"
 	"compress/gzip"
+	"context"
 	"errors"
 	"fmt"
+	"github.com/ipfs/go-ipfs/auth"
+	"github.com/wumansgy/goEncrypt"
 	"io"
+	"io/ioutil"
 	"os"
 	gopath "path"
 	"path/filepath"
@@ -28,6 +32,7 @@ const (
 	archiveOptionName          = "archive"
 	compressOptionName         = "compress"
 	compressionLevelOptionName = "compression-level"
+	decryptPassword            = "password"
 )
 
 var GetCmd = &cmds.Command{
@@ -55,6 +60,7 @@ may also specify the level of compression by specifying '-l=<1-9>'.
 		cmds.BoolOption(compressOptionName, "C", "Compress the output with GZIP compression."),
 		cmds.IntOption(compressionLevelOptionName, "l", "The level of compression (1-9)."),
 		cmds.BoolOption(progressOptionName, "p", "Stream progress data.").WithDefault(true),
+		cmds.StringOption(decryptPassword, "password from file", "解密密码"),
 	},
 	PreRun: func(req *cmds.Request, env cmds.Environment) error {
 		_, err := getCompressOptions(req)
@@ -72,12 +78,39 @@ may also specify the level of compression by specifying '-l=<1-9>'.
 		}
 
 		p := path.New(req.Arguments[0])
-
-		file, err := api.Unixfs().Get(req.Context, p)
+		pr, err := api.ResolvePath(req.Context, p)
 		if err != nil {
 			return err
 		}
-
+		//todo fix test
+		order := auth.ResponseCreateRetrievalOrder{}
+		if req.Header.Get("Authorization") != "" {
+			log.Infof("检索cid: %+v,向服务器发送检索订单", pr.Cid())
+			auth.CreateRetrievalOrder(pr.Cid().String(), req.Header, &order)
+			if order.Token == "" {
+				return errors.New("gen retrive order failed")
+			}
+		}
+		nctx := context.WithValue(req.Context, "order", order.Token)
+		file, err := api.Unixfs().Get(nctx, p)
+		if err != nil {
+			return err
+		}
+		password, _ := req.Options[decryptPassword].(string)
+		if len(password)>0 {
+			switch f :=  file.(type){
+			case files.File:
+				old, err := ioutil.ReadAll(f)
+				if err != nil {
+					return err
+				}
+				cryptText, err := goEncrypt.DesCbcDecrypt(old, []byte(password),[]byte("wumansgy")) //解密得到密文,可以自己传入初始化向量,如果不传就使用默认的初始化向量,8字节
+				if err != nil {
+					return  err
+				}
+				file= files.NewBytesFile([]byte(cryptText))
+			}
+		}
 		size, err := file.Size()
 		if err != nil {
 			return err

@@ -38,6 +38,7 @@ BASIC COMMANDS
   get <ref>     Download IPFS objects
   ls <ref>      List links from an object
   refs <ref>    List hashes of links from an object
+  login         login in IDP server to get Token
 
 DATA STRUCTURE COMMANDS
   dag           Interact with IPLD DAG nodes
@@ -155,6 +156,7 @@ var rootSubcommands = map[string]*cmds.Command{
 	"shutdown":  daemonShutdownCmd,
 	"cid":       CidCmd,
 	"multibase": MbaseCmd,
+	"login":     LoginCmd,
 }
 
 // RootRO is the readonly version of Root
