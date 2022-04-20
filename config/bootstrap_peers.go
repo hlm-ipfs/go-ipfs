@@ -15,10 +15,10 @@ import (
 // NOTE: This is here -- and not inside cmd/ipfs/init.go -- because of an
 // import dependency issue. TODO: move this into a config/default/ package.
 var DefaultBootstrapAddresses = []string{
-	"/ip4/103.44.247.17/tcp/24001/p2p/12D3KooWG4XL3GsSWqTkAf3C9R6zfLtaWAkrZyDfjB5zwV4sTSwM",
-	"/ip4/103.44.247.17/tcp/24002/p2p/12D3KooWGEg3rXzd5Ru7ojtZZDFyGh6pU5a6favWXP13S8eTE51F",
-	"/ip4/103.44.247.17/tcp/24003/p2p/12D3KooWFTJ5KZoidWz9yT3bE1zqfGGW2THQ8SatKmrqfDsDVUEC",
 	"/ip4/103.44.247.16/tcp/14001/p2p/12D3KooWHpmydjMZEDdkGXkpy2V45w9Tg7Z5tR7FBqUw7bEvjQuJ",
+	"/ip4/103.44.247.17/tcp/24001/p2p/12D3KooWKYUwAwJKNo1jyM5BB7ALndrW76TQ7hpTt2riV6ihwsXK",
+	"/ip4/103.44.247.17/tcp/24002/p2p/12D3KooWNEd3GJuK3ei94VFci4XQRBaj9snc21esTTUt9rduXctv",
+	"/ip4/103.44.247.17/tcp/24003/p2p/12D3KooWGjgEaiZxK81Hxq45wrKVcGmbSxyTTp3EkP4GfjVZtTBU",
 }
 
 // ErrInvalidPeerAddr signals an address is not a valid peer address.
