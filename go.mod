@@ -282,7 +282,7 @@ require (
 	lukechampine.com/blake3 v1.1.6 // indirect
 )
 
-replace hlm-ipfs/ipfs-probe => github.com/hlm-ipfs/ipfs-probe v0.0.0-20220317032625-f5bb53f526e0
+replace hlm-ipfs/ipfs-probe => github.com/hlm-ipfs/ipfs-probe v0.0.0-20220421024354-3312de64b9f6
 
 replace github.com/ipfs/go-bitswap => github.com/hlm-ipfs/go-bitswap v0.6.1-0.20220419090205-c158d6843531
 
