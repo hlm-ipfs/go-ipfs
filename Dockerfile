@@ -8,7 +8,7 @@ ENV IPFS_PATH /data/ipfs
 # start_ipfs initializes an fs-repo if none is mounted.
 # Important this happens after the USER directive so permissions are correct.
 VOLUME $IPFS_PATH
-
+ENV LIBP2P_FORCE_PNET 1
 # The default logging level
 ENV IPFS_LOGGING ""
 # Get the ipfs binary, entrypoint script, and TLS CAs from the build container.
