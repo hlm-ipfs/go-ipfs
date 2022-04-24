@@ -13,7 +13,7 @@ ENV LIBP2P_FORCE_PNET 1
 ENV IPFS_LOGGING ""
 # Get the ipfs binary, entrypoint script, and TLS CAs from the build container.
 COPY  ./bin/ipfs /usr/local/bin/ipfs
-COPY  ./bin/swarm.key /data/ipfs/swarm.key
+COPY  ./bin/swarm.key /etc/ipfs/swarm.key
 # This shared lib (part of glibc) doesn't seem to be included with busybox.
 # Swarm TCP; should be exposed to the public
 EXPOSE 4001
