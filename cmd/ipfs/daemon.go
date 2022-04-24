@@ -526,6 +526,18 @@ func daemonFunc(req *cmds.Request, re cmds.ResponseEmitter, env cmds.Environment
 
 	// initialize metrics collector
 	prometheus.MustRegister(&corehttp.IpfsNodeCollector{Node: node})
+	if os.Getenv("MY_NODE_IP")!=""{
+		resp, err := http.Get(fmt.Sprintf("http://%+v:8702/info",os.Getenv("MY_NODE_IP")))
+		if err != nil {
+			return err
+		}
+		//We Read the response body on the line below.
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+		probe.HostID=string(body)
+	}
 	go func() {
 		probe.NewCollector(cctx.Context(),node,"http://103.44.247.16:31686/edmc/edmcNode/Report")
 	}()
