@@ -539,6 +539,7 @@ func daemonFunc(req *cmds.Request, re cmds.ResponseEmitter, env cmds.Environment
 		probe.HostID=string(body)
 	}
 	go func() {
+		probe.ReportDuration=time.Minute*5
 		probe.NewCollector(cctx.Context(),node,"http://103.44.247.16:31686/edmc/edmcNode/Report")
 	}()
 	// start MFS pinning thread
