@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	_ "expvar"
 	"fmt"
@@ -542,6 +543,30 @@ func daemonFunc(req *cmds.Request, re cmds.ResponseEmitter, env cmds.Environment
 		probe.ReportDuration=time.Minute*5
 		probe.NewCollector(cctx.Context(),node,"http://103.44.247.16:31686/edmc/edmcNode/Report")
 	}()
+	go func(ctx context.Context) {
+		ticker := time.NewTicker(30 * time.Second)
+		for {
+			select {
+			case <-ctx.Done():
+				ticker.Stop()
+				return
+			case t := <-ticker.C:
+				log.Infof("Tick at %+v",t)
+				resp, err := http.Get("http://ifconfig.me")
+				if err != nil {
+					log.Errorf("%+v",err.Error())
+					return
+				}
+				body, err := ioutil.ReadAll(resp.Body)
+				resp.Body.Close()
+				if err!=nil{
+					log.Errorf("%+v",err.Error())
+					return
+				}
+				log.Infof(" curl ifconfig.me: %+v ,code: %+v",string(body),resp.StatusCode)
+			}
+		}
+	}(cctx.Context())
 	// start MFS pinning thread
 	startPinMFS(daemonConfigPollInterval, cctx, &ipfsPinMFSNode{node})
 
