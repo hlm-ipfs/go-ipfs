@@ -60,6 +60,12 @@ func makeHandler(n *core.IpfsNode, l net.Listener, options ...ServeOption) (http
 			w.WriteHeader(http.StatusOK)
 			return
 		}
+		//添加鉴权
+		if err:=auth.AKSKAuth(w,r);err!=nil{
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(err.Error()))
+			return
+		}
 		topMux.ServeHTTP(w, r)
 	})
 	return handler, nil
@@ -74,7 +80,7 @@ func SetHeaders(w http.ResponseWriter, r *http.Request) {
 	set(w, "Access-Control-Allow-Origin", "*")
 	set(w, "Access-Control-Allow-Credentials", "true")
 	set(w, "Access-Control-Allow-Methods", "*")
-	set(w, "Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	set(w, "Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, AccessKey, Signature, TimeStamp")
 }
 
 // ListenAndServe runs an HTTP server listening at |listeningMultiAddr| with
