@@ -5,7 +5,6 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -74,32 +73,7 @@ func AKSKAuth(w http.ResponseWriter, r *http.Request) error {
 	}
 	log.Infof("server Signature: %+v ", serverSign)
 	if serverSign != sign {
-		respErr:=DebugResponse{
-			Server: struct {
-				Sign        string
-				Method      string
-				Url         string
-				Query       string
-				Ak          string
-				Timestamp   string
-				Sk          string
-				RequestBody string
-			}{
-				Sign: serverSign,
-				Method: r.Method,
-				Url:  formatURLPath(r.URL.Path),
-				Query: r.URL.RawQuery,
-				Ak: ak,
-				Timestamp: timeStamp,
-				Sk: sk,
-				RequestBody: string(requestBody),
-			},
-			Client: struct {
-				Sign string
-			}{Sign: sign},
-		}
-		respE,_:=json.Marshal(respErr)
-		return errors.New(string(respE))
+		return errors.New("Signature error")
 	}
 	return nil
 }
