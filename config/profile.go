@@ -25,7 +25,7 @@ type Profile struct {
 // according to https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry.xhtml
 // and https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry.xhtml
 var defaultServerFilters = []string{
-	"/ip4/10.0.0.0/ipcidr/8",
+/*	"/ip4/10.0.0.0/ipcidr/8",
 	"/ip4/100.64.0.0/ipcidr/10",
 	"/ip4/169.254.0.0/ipcidr/16",
 	"/ip4/172.16.0.0/ipcidr/12",
@@ -40,7 +40,7 @@ var defaultServerFilters = []string{
 	"/ip6/2001:2::/ipcidr/48",
 	"/ip6/2001:db8::/ipcidr/32",
 	"/ip6/fc00::/ipcidr/7",
-	"/ip6/fe80::/ipcidr/10",
+	"/ip6/fe80::/ipcidr/10",*/
 }
 
 // Profiles is a map holding configuration transformers. Docs are in docs/config.md
