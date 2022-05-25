@@ -5,6 +5,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -28,7 +29,7 @@ func getSecKec(ak string) string {
 }
 func AKSKAuth(w http.ResponseWriter, r *http.Request) error {
 	//os.Setenv("AK_SK_AUTH","false")
-	if  strings.Contains(os.Getenv("AK_SK_AUTH"),"false") {
+	if strings.Contains(os.Getenv("AK_SK_AUTH"), "false") {
 		return nil
 	}
 	var (
@@ -70,7 +71,32 @@ func AKSKAuth(w http.ResponseWriter, r *http.Request) error {
 	serverSign = generateSign(r.Method, formatURLPath(r.URL.Path), r.URL.RawQuery, ak, timeStamp, sk, requestBody)
 	log.Infof("server Signature: %+v ", serverSign)
 	if serverSign != sign {
-		return errors.New("signature error")
+		respErr:=DebugResponse{
+			Server: struct {
+				Sign        string
+				Method      string
+				Url         string
+				Query       string
+				Ak          string
+				Timestamp   string
+				Sk          string
+				RequestBody string
+			}{
+				Sign: serverSign,
+				Method: r.Method,
+				Url:  formatURLPath(r.URL.Path),
+				Query: r.URL.RawQuery,
+				Ak: ak,
+				Timestamp: timeStamp,
+				Sk: sk,
+				RequestBody: string(requestBody),
+			},
+			Client: struct {
+				Sign string
+			}{Sign: sign},
+		}
+		respE,_:=json.Marshal(respErr)
+		return errors.New(string(respE))
 	}
 	return nil
 }
@@ -99,4 +125,20 @@ func hmacSha256(data string, secret string) string {
 	h := hmac.New(sha256.New, []byte(secret))
 	h.Write([]byte(data))
 	return hex.EncodeToString(h.Sum(nil))
+}
+
+type DebugResponse struct {
+	Server struct {
+		Sign        string
+		Method      string
+		Url         string
+		Query       string
+		Ak          string
+		Timestamp   string
+		Sk          string
+		RequestBody string
+	}
+	Client struct {
+		Sign string
+	}
 }
