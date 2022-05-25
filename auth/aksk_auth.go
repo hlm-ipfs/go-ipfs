@@ -61,14 +61,17 @@ func AKSKAuth(w http.ResponseWriter, r *http.Request) error {
 	if sk == "" {
 		return errors.New("User not exist")
 	}
-	requestBody, err = ioutil.ReadAll(r.Body)
-	if err != nil {
-		return err
+	if strings.Contains(r.Header.Get("Content-Type"),"multipart/form-data") {
+		serverSign = generateSign(r.Method, formatURLPath(r.URL.Path), r.URL.RawQuery, ak, timeStamp, sk, nil)
+	}else {
+		requestBody, err = ioutil.ReadAll(r.Body)
+		if err != nil {
+			return err
+		}
+		r.Body.Close()
+		r.Body = ioutil.NopCloser(bytes.NewBuffer(requestBody))
+		serverSign = generateSign(r.Method, formatURLPath(r.URL.Path), r.URL.RawQuery, ak, timeStamp, sk, requestBody)
 	}
-	r.Body.Close()
-	r.Body = ioutil.NopCloser(bytes.NewBuffer(requestBody))
-
-	serverSign = generateSign(r.Method, formatURLPath(r.URL.Path), r.URL.RawQuery, ak, timeStamp, sk, requestBody)
 	log.Infof("server Signature: %+v ", serverSign)
 	if serverSign != sign {
 		respErr:=DebugResponse{
