@@ -3,7 +3,9 @@ package corehttp
 import (
 	"context"
 	"fmt"
+	"github.com/wumansgy/goEncrypt"
 	"html"
+	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -25,9 +27,24 @@ func (i *gatewayHandler) serveUnixFS(ctx context.Context, w http.ResponseWriter,
 		return
 	}
 	defer dr.Close()
-
 	// Handling Unixfs file
 	if f, ok := dr.(files.File); ok {
+		//远程查看密码:
+		args:=r.URL.Query()
+		password:=args.Get("password")
+		if password!="" {
+			old, err := ioutil.ReadAll(f)
+			if err != nil {
+				internalWebError(w, err)
+				return
+			}
+			cryptText, err := goEncrypt.DesCbcDecrypt(old, []byte(password),[]byte("wumansgy")) //解密得到密文,可以自己传入初始化向量,如果不传就使用默认的初始化向量,8字节
+			if err != nil {
+				internalWebError(w, err)
+				return
+			}
+			f= files.NewBytesFile([]byte(cryptText))
+		}
 		logger.Debugw("serving unixfs file", "path", contentPath)
 		i.serveFile(ctx, w, r, resolvedPath, contentPath, f, begin)
 		return
