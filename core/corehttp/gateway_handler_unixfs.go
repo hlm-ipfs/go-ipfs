@@ -31,7 +31,7 @@ func (i *gatewayHandler) serveUnixFS(ctx context.Context, w http.ResponseWriter,
 	if f, ok := dr.(files.File); ok {
 		//远程查看密码:
 		args:=r.URL.Query()
-		password:=args.Get("password")
+		password:=args.Get("code")
 		if password!="" {
 			old, err := ioutil.ReadAll(f)
 			if err != nil {
