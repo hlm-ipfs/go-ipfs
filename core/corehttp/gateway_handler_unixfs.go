@@ -7,6 +7,7 @@ import (
 	"html"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"time"
 
 	files "github.com/ipfs/go-ipfs-files"
@@ -44,6 +45,8 @@ func (i *gatewayHandler) serveUnixFS(ctx context.Context, w http.ResponseWriter,
 				return
 			}
 			f= files.NewBytesFile([]byte(cryptText))
+			size, err := f.Size()
+			w.Header().Set("Content-Length", strconv.FormatInt(size, 10))
 		}
 		logger.Debugw("serving unixfs file", "path", contentPath)
 		i.serveFile(ctx, w, r, resolvedPath, contentPath, f, begin)
