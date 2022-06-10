@@ -4,7 +4,6 @@ require (
 	bazil.org/fuse v0.0.0-20200117225306-7b5117fecadc
 	contrib.go.opencensus.io/exporter/prometheus v0.4.0
 	github.com/blang/semver/v4 v4.0.0
-	github.com/cenkalti/backoff/v4 v4.1.3
 	github.com/ceramicnetwork/go-dag-jose v0.1.0
 	github.com/cespare/xxhash v1.1.0
 	github.com/cheggaaa/pb v1.0.29
@@ -114,7 +113,6 @@ require (
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.7.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.7.0
 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.7.0
-	go.opentelemetry.io/otel/exporters/zipkin v1.7.0
 	go.opentelemetry.io/otel/sdk v1.7.0
 	go.opentelemetry.io/otel/trace v1.7.0
 	go.uber.org/dig v1.14.0
@@ -127,9 +125,11 @@ require (
 
 require (
 	github.com/benbjohnson/clock v1.3.0
+	github.com/cenkalti/backoff/v4 v4.1.3
 	github.com/ipfs/go-log/v2 v2.5.1
 	github.com/wumansgy/goEncrypt v1.0.0
-    	hlm-ipfs/ipfs-probe v0.0.0
+	go.opentelemetry.io/otel/exporters/zipkin v1.7.0
+	hlm-ipfs/ipfs-probe v0.0.0
 )
 
 require (
@@ -159,8 +159,6 @@ require (
 	github.com/go-logfmt/logfmt v0.5.1 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/go-kit/log v0.1.0 // indirect
-	github.com/go-logfmt/logfmt v0.5.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
@@ -170,11 +168,9 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/gopacket v1.1.19 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/gopherjs/gopherjs v0.0.0-20190812055157-5d271430af9f // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.0 // indirect
-	github.com/gopherjs/gopherjs v0.0.0-20190812055157-5d271430af9f // indirect
-	github.com/gorilla/websocket v1.4.2 // indirect
-	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/hannahhoward/go-pubsub v0.0.0-20200423002714-8d62886cc36e // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
@@ -212,14 +208,10 @@ require (
 	github.com/libp2p/go-yamux/v3 v3.1.2 // indirect
 	github.com/libp2p/zeroconf/v2 v2.1.1 // indirect
 	github.com/lucas-clemente/quic-go v0.27.1 // indirect
+	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
 	github.com/marten-seemann/qtls-go1-16 v0.1.5 // indirect
 	github.com/marten-seemann/qtls-go1-17 v0.1.1 // indirect
 	github.com/marten-seemann/qtls-go1-18 v0.1.1 // indirect
-	github.com/lucas-clemente/quic-go v0.25.0 // indirect
-	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
-	github.com/marten-seemann/qtls-go1-16 v0.1.4 // indirect
-	github.com/marten-seemann/qtls-go1-17 v0.1.0 // indirect
-	github.com/marten-seemann/qtls-go1-18 v0.1.0-beta.1 // indirect
 	github.com/marten-seemann/tcp v0.0.0-20210406111302-dfbc87cc63fd // indirect
 	github.com/mattn/go-colorable v0.1.4 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
@@ -266,15 +258,11 @@ require (
 	github.com/whyrusleeping/go-keyspace v0.0.0-20160322163242-5b898ac5add1 // indirect
 	github.com/whyrusleeping/mdns v0.0.0-20190826153040-b9b60ed33aa9 // indirect
 	github.com/whyrusleeping/timecache v0.0.0-20160911033111-cfcb2f1abfee // indirect
+	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/internal/retry v1.7.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.7.0 // indirect
 	go.opentelemetry.io/otel/metric v0.30.0 // indirect
 	go.opentelemetry.io/proto/otlp v0.16.0 // indirect
-	github.com/yusufpapurcu/wmi v1.2.2 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.2.0 // indirect
-	go.opentelemetry.io/otel/internal/metric v0.25.0 // indirect
-	go.opentelemetry.io/otel/metric v0.25.0 // indirect
-	go.opentelemetry.io/proto/otlp v0.10.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	go4.org v0.0.0-20200411211856-f5505b9728dd // indirect

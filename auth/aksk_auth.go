@@ -27,7 +27,7 @@ func getSecKec(ak string) string {
 	return ""
 }
 func AKSKAuth(w http.ResponseWriter, r *http.Request) error {
-	//os.Setenv("AK_SK_AUTH","false")
+	os.Setenv("AK_SK_AUTH","false")
 	if strings.Contains(os.Getenv("AK_SK_AUTH"), "false") {
 		return nil
 	}

@@ -5,6 +5,7 @@ import (
 	"errors"
 	_ "expvar"
 	"fmt"
+	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -971,4 +972,8 @@ func printVersion() {
 	fmt.Printf("Repo version: %d\n", fsrepo.RepoVersion)
 	fmt.Printf("System version: %s\n", runtime.GOARCH+"/"+runtime.GOOS)
 	fmt.Printf("Golang version: %s\n", runtime.Version())
+}
+
+func init()  {
+	identify.ActivationThresh=1
 }
