@@ -548,8 +548,8 @@ github.com/hlm-ipfs/go-bitswap v0.6.1-0.20220419090205-c158d6843531 h1:vpzIYFNMW
 github.com/hlm-ipfs/go-bitswap v0.6.1-0.20220419090205-c158d6843531/go.mod h1:Hj3ZXdOC5wBJvENtdqsixmzzRukqd8EHLxZLZc3mzRA=
 github.com/hlm-ipfs/go-ipfs-cmds v0.8.2-0.20220519061433-77febabb5ef4 h1:rdjcqmoXzmy8cTz3qjZ8g3/y+qRtFGqrgilmPudtJH4=
 github.com/hlm-ipfs/go-ipfs-cmds v0.8.2-0.20220519061433-77febabb5ef4/go.mod h1:y0bflH6m4g6ary4HniYt98UqbrVnRxmRarzeMdLIUn0=
-github.com/hlm-ipfs/go-libp2p-quic-transport v0.17.1-0.20220615073508-06bb77e9f1a3 h1:vGp1LiVrktZaoyyvCuUalK0czz7/N4MZZQCpKKXZUx0=
-github.com/hlm-ipfs/go-libp2p-quic-transport v0.17.1-0.20220615073508-06bb77e9f1a3/go.mod h1:f/UGU8ZHegmGcMuC7PBzMmuIUvJua2uTNroqsBd+Nz0=
+github.com/hlm-ipfs/go-libp2p-quic-transport v0.17.1-0.20220615082203-5edd37755676 h1:T2Mcn+Vjw+6pBdLrnv1AQAKIEPNuiRyiMLIXdoVDjuQ=
+github.com/hlm-ipfs/go-libp2p-quic-transport v0.17.1-0.20220615082203-5edd37755676/go.mod h1:f/UGU8ZHegmGcMuC7PBzMmuIUvJua2uTNroqsBd+Nz0=
 github.com/hlm-ipfs/ipfs-probe v0.0.0-20220427095601-a30fb2009ca7 h1:ujuRf3r27Aqqphwgklqdq4mZ9asj0gpwW1vOcy0GbZ4=
 github.com/hlm-ipfs/ipfs-probe v0.0.0-20220427095601-a30fb2009ca7/go.mod h1:l/iH38wt+jCmSlqoy17Aq7aw3D2t+8eptggS7+KQ0q8=
 github.com/hlm-ipfs/quic-go v0.27.2-0.20220615072548-89fc5cb4087f h1:iuMOayqTZJy4gFVRovrB5Hb3VMQuamkcExVKPaEUT5Q=

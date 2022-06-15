@@ -27,7 +27,7 @@ func Transports(tptConfig config.Transports) interface{} {
 		if tptConfig.Network.Websocket.WithDefault(true) {
 			opts.Opts = append(opts.Opts, libp2p.Transport(websocket.New))
 		}
-
+	/*
 		if tptConfig.Network.QUIC.WithDefault(!privateNetworkEnabled) {
 			if privateNetworkEnabled {
 				// QUIC was force enabled while the private network was turned on.
@@ -39,7 +39,11 @@ func Transports(tptConfig config.Transports) interface{} {
 			}
 			opts.Opts = append(opts.Opts, libp2p.Transport(libp2pquic.NewTransport))
 		}
-
+	 */
+		if tptConfig.Network.QUIC.WithDefault(true) {
+			fmt.Println(privateNetworkEnabled)
+			opts.Opts = append(opts.Opts, libp2p.Transport(libp2pquic.NewTransport))
+		}
 		return opts, nil
 	}
 }
