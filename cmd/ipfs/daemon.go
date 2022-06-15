@@ -976,4 +976,5 @@ func printVersion() {
 
 func init()  {
 	identify.ActivationThresh=1
+	os.Setenv("QUIC_AESECB_KEY", "album_unwind_fret")
 }
