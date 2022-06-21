@@ -18,6 +18,8 @@ var DefaultBootstrapAddresses = []string{
 	"/ip4/103.44.247.16/tcp/14001/p2p/12D3KooWHpmydjMZEDdkGXkpy2V45w9Tg7Z5tR7FBqUw7bEvjQuJ",
 	"/ip4/103.44.247.17/tcp/24001/p2p/12D3KooWKYUwAwJKNo1jyM5BB7ALndrW76TQ7hpTt2riV6ihwsXK",
 	"/ip4/103.44.247.17/tcp/24002/p2p/12D3KooWNEd3GJuK3ei94VFci4XQRBaj9snc21esTTUt9rduXctv",
+	"/ip4/103.44.247.17/udp/24001/quic/p2p/12D3KooWKYUwAwJKNo1jyM5BB7ALndrW76TQ7hpTt2riV6ihwsXK",
+	"/ip4/103.44.247.17/udp/24002/quic/p2p/12D3KooWNEd3GJuK3ei94VFci4XQRBaj9snc21esTTUt9rduXctv",
 }
 // ErrInvalidPeerAddr signals an address is not a valid peer address.
 var ErrInvalidPeerAddr = errors.New("invalid peer address")
