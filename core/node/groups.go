@@ -301,7 +301,7 @@ func Online(bcfg *BuildCfg, cfg *config.Config) fx.Option {
 		fx.Invoke(IpnsRepublisher(repubPeriod, recordLifetime)),
 
 		fx.Provide(p2p.New),
-		fx.Provide(libp2p.RelayDiscovery),
+		fx.Invoke(libp2p.RelayDiscovery),
 		LibP2P(bcfg, cfg),
 		OnlineProviders(cfg.Experimental.StrategicProviding, cfg.Experimental.AcceleratedDHTClient, cfg.Reprovider.Strategy, cfg.Reprovider.Interval),
 	)
