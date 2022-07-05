@@ -3,6 +3,7 @@ package libp2p
 import (
 	"context"
 	logging "github.com/ipfs/go-log"
+	manet "github.com/multiformats/go-multiaddr/net"
 	"time"
 
 	"github.com/libp2p/go-libp2p-core/event"
@@ -49,9 +50,19 @@ func relayPubLoop(host host.Host, topic *pubsub.Topic) {
 					ID:    host.ID(),
 					Addrs: host.Addrs(),
 				}
-				msg := info.String()
-				err := topic.Publish(context.TODO(), []byte(msg))
-				relaylog.Infow("relay pub msg", "msg", msg, "err", err)
+				addrs,err:=peer.AddrInfoToP2pAddrs(&info)
+				if err!=nil{
+					relaylog.Infow("relay pub msg ", "err", err)
+					continue
+				}
+				for _,addr:=range addrs{
+					if manet.IsPrivateAddr(addr){
+						continue
+					}
+					msg:=addr.String()
+					err := topic.Publish(context.TODO(), []byte(msg))
+					relaylog.Infow("relay pub msg", "msg", msg, "err", err)
+				}
 			}
 		}
 	}
