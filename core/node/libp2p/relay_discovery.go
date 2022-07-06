@@ -2,21 +2,23 @@ package libp2p
 
 import (
 	"context"
-	logging "github.com/ipfs/go-log"
-	manet "github.com/multiformats/go-multiaddr/net"
 	"time"
 
+	logging "github.com/ipfs/go-log"
 	"github.com/libp2p/go-libp2p-core/event"
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/network"
 	"github.com/libp2p/go-libp2p-core/peer"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/multiformats/go-multiaddr"
+	manet "github.com/multiformats/go-multiaddr/net"
 )
-var relaylog = logging.Logger("libp2p/relay")
+
 const (
 	relayTopic = "relay-discovery"
 )
+
+var relaylog = logging.Logger("libp2p/relay")
 
 func RelayDiscovery(host host.Host, ps *pubsub.PubSub, peerChan AddrInfoChan) error {
 	topic, err := ps.Join(relayTopic)
@@ -46,25 +48,30 @@ func relayPubLoop(host host.Host, topic *pubsub.Topic) {
 			}
 			switch r := ev.(event.EvtLocalReachabilityChanged).Reachability; r {
 			case network.ReachabilityPublic:
-				info := peer.AddrInfo{
-					ID:    host.ID(),
-					Addrs: host.Addrs(),
-				}
-				addrs,err:=peer.AddrInfoToP2pAddrs(&info)
-				if err!=nil{
-					relaylog.Infow("relay pub msg ", "err", err)
+				info := &peer.AddrInfo{ID: host.ID(), Addrs: host.Addrs()}
+				addrs, err := peer.AddrInfoToP2pAddrs(info)
+				if err != nil {
+					relaylog.Infow("relay pub loop error", "err", err)
 					continue
 				}
-				for _,addr:=range addrs{
-					if manet.IsPrivateAddr(addr){
-						continue
-					}
-					msg:=addr.String()
-					err := topic.Publish(context.TODO(), []byte(msg))
-					relaylog.Infow("relay pub msg", "msg", msg, "err", err)
-				}
+				go relayPubLoopTiming(topic, time.Now(), addrs)
 			}
 		}
+	}
+}
+
+//一个小时之内 每5分钟发布一次
+func relayPubLoopTiming(topic *pubsub.Topic, now time.Time, addrs []multiaddr.Multiaddr) {
+	for time.Since(now) <= time.Hour {
+		for _, addr := range addrs {
+			if manet.IsPrivateAddr(addr) {
+				continue
+			}
+			msg := addr.String()
+			err := topic.Publish(context.TODO(), []byte(msg))
+			relaylog.Infow("relay pub msg", "msg", msg, "err", err)
+		}
+		time.Sleep(time.Minute * 5)
 	}
 }
 
