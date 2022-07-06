@@ -529,8 +529,8 @@ func daemonFunc(req *cmds.Request, re cmds.ResponseEmitter, env cmds.Environment
 
 	// initialize metrics collector
 	prometheus.MustRegister(&corehttp.IpfsNodeCollector{Node: node})
-	if os.Getenv("MY_NODE_IP")!=""{
-		resp, err := http.Get(fmt.Sprintf("http://%+v:8702/info",os.Getenv("MY_NODE_IP")))
+	if os.Getenv("MY_NODE_IP") != "" {
+		resp, err := http.Get(fmt.Sprintf("http://%+v:8702/info", os.Getenv("MY_NODE_IP")))
 		if err != nil {
 			return err
 		}
@@ -539,11 +539,11 @@ func daemonFunc(req *cmds.Request, re cmds.ResponseEmitter, env cmds.Environment
 		if err != nil {
 			return err
 		}
-		probe.HostID=string(body)
+		probe.HostID = string(body)
 	}
 	go func() {
-		probe.ReportDuration=time.Minute*5
-		probe.NewCollector(cctx.Context(),node,"http://103.44.247.16:31686/edmc/edmcNode/Report")
+		probe.ReportDuration = time.Minute * 5
+		probe.NewCollector(cctx.Context(), node, "http://103.44.247.16:31686/edmc/edmcNode/Report")
 	}()
 	go func(ctx context.Context) {
 		ticker := time.NewTicker(30 * time.Second)
@@ -553,19 +553,19 @@ func daemonFunc(req *cmds.Request, re cmds.ResponseEmitter, env cmds.Environment
 				ticker.Stop()
 				return
 			case t := <-ticker.C:
-				log.Infof("Tick at %+v",t)
+				log.Infof("Tick at %+v", t)
 				resp, err := http.Get("http://ifconfig.me")
 				if err != nil {
-					log.Errorf("%+v",err.Error())
+					log.Errorf("%+v", err.Error())
 					return
 				}
 				body, err := ioutil.ReadAll(resp.Body)
 				resp.Body.Close()
-				if err!=nil{
-					log.Errorf("%+v",err.Error())
+				if err != nil {
+					log.Errorf("%+v", err.Error())
 					return
 				}
-				log.Infof(" curl ifconfig.me: %+v ,code: %+v",string(body),resp.StatusCode)
+				log.Infof(" curl ifconfig.me: %+v ,code: %+v", string(body), resp.StatusCode)
 			}
 		}
 	}(cctx.Context())
@@ -974,7 +974,11 @@ func printVersion() {
 	fmt.Printf("Golang version: %s\n", runtime.Version())
 }
 
-func init()  {
-	identify.ActivationThresh=1
-	os.Setenv("QUIC_AESECB_KEY", "album_unwind_fret")
+func init() {
+	identify.ActivationThresh = 1
+	if os.Getenv("QUIC_AESECB_KEY") != "" {
+		os.Setenv("QUIC_AESECB_KEY", os.Getenv("QUIC_AESECB_KEY"))
+	} else {
+		os.Setenv("QUIC_AESECB_KEY", "album_unwind_fret")
+	}
 }
