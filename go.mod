@@ -286,7 +286,7 @@ require (
 
 require hlm-ipfs/x v0.0.0 // indirect
 
-replace hlm-ipfs/ipfs-probe => github.com/hlm-ipfs/ipfs-probe v0.0.0-20220427095601-a30fb2009ca7
+replace hlm-ipfs/ipfs-probe => github.com/hlm-ipfs/ipfs-probe v0.0.0-20220706013505-923e21b91f09
 
 replace github.com/ipfs/go-bitswap => github.com/hlm-ipfs/go-bitswap v0.6.1-0.20220419090205-c158d6843531
 
