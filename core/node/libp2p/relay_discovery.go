@@ -76,7 +76,7 @@ func relayPubLoopTiming(topic *pubsub.Topic, now time.Time, addrs []multiaddr.Mu
 }
 
 func relaySubLoop(sub *pubsub.Subscription, peerChan AddrInfoChan) {
-	for range time.Tick(time.Second * 15) {
+	for {
 		msg, err := sub.Next(context.TODO())
 		if err != nil {
 			relaylog.Errorw("relay sub error", "err", err.Error())

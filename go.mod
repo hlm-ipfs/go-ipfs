@@ -296,6 +296,8 @@ replace github.com/lucas-clemente/quic-go => github.com/hlm-ipfs/quic-go v0.27.2
 
 replace hlm-ipfs/x => github.com/hlm-ipfs/x v0.0.0-20211202054531-0de4aa04b33d
 
-replace github.com/libp2p/go-libp2p-quic-transport => github.com/hlm-ipfs/go-libp2p-quic-transport v0.17.1-0.20220615082203-5edd37755676
+replace github.com/libp2p/go-libp2p-quic-transport => github.com/hlm-ipfs/go-libp2p-quic-transport v0.17.1-0.20220711092919-ddb3d8ef6b16
+
+replace github.com/libp2p/go-libp2p => github.com/hlm-ipfs/go-libp2p v0.19.5-0.20220711093949-45fd6c377223
 
 go 1.17

@@ -5,6 +5,7 @@ import (
 	"errors"
 	_ "expvar"
 	"fmt"
+	libp2pquic "github.com/libp2p/go-libp2p-quic-transport"
 	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
 	"io/ioutil"
 	"net"
@@ -194,6 +195,11 @@ Headers.
 	NoRemote:    true,
 	Extra:       commands.CreateCmdExtras(commands.SetDoesNotUseConfigAsInput(true)),
 	Run:         daemonFunc,
+}
+
+func init() {
+	libp2pquic.HolePunchTimeout = time.Second * 10
+	libp2pquic.QuicConfig.HandshakeIdleTimeout = time.Second * 10
 }
 
 // defaultMux tells mux to serve path using the default muxer. This is
