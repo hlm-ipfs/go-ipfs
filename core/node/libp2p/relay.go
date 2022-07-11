@@ -6,6 +6,7 @@ import (
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/libp2p/go-libp2p/p2p/host/autorelay"
 	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
+	"github.com/libp2p/go-libp2p/p2p/protocol/holepunch"
 )
 
 func RelayTransport(enableRelay bool) func() (opts Libp2pOpts, err error) {
@@ -80,7 +81,7 @@ func HolePunching(flag config.Flag, hasRelayClient bool) func() (opts Libp2pOpts
 				}
 				return
 			}
-			opts.Opts = append(opts.Opts, libp2p.EnableHolePunching())
+			opts.Opts = append(opts.Opts, libp2p.EnableHolePunching(holepunch.WithTracer(NewHoleTrace())))
 		}
 		return
 	}
