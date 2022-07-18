@@ -128,8 +128,10 @@ require (
 	github.com/cenkalti/backoff/v4 v4.1.3
 	github.com/ipfs/go-log/v2 v2.5.1
 	github.com/wumansgy/goEncrypt v1.0.0
+	go-micro.dev/v4 v4.4.0
 	go.opentelemetry.io/otel/exporters/zipkin v1.7.0
 	hlm-ipfs/ipfs-probe v0.0.0
+	hlm-ipfs/x v0.0.0
 )
 
 require (
@@ -277,6 +279,7 @@ require (
 	google.golang.org/genproto v0.0.0-20211118181313-81c1377c94b1 // indirect
 	google.golang.org/grpc v1.46.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
@@ -284,20 +287,18 @@ require (
 	lukechampine.com/blake3 v1.1.7 // indirect
 )
 
-require hlm-ipfs/x v0.0.0 // indirect
+replace (
+	github.com/libp2p/go-libp2p => github.com/hlm-ipfs/go-libp2p v0.19.5-0.20220718073924-f1f43ba30e5d
+	github.com/libp2p/go-libp2p-quic-transport => github.com/hlm-ipfs/go-libp2p-quic-transport v0.17.1-0.20220718073456-49e0349678bc
+	github.com/lucas-clemente/quic-go => github.com/hlm-ipfs/quic-go v0.27.2-0.20220615072548-89fc5cb4087f
+)
+
+replace hlm-ipfs/x => github.com/hlm-ipfs/x v0.0.0-20211202054531-0de4aa04b33d
 
 replace hlm-ipfs/ipfs-probe => github.com/hlm-ipfs/ipfs-probe v0.0.0-20220706013505-923e21b91f09
 
 replace github.com/ipfs/go-bitswap => github.com/hlm-ipfs/go-bitswap v0.6.1-0.20220419090205-c158d6843531
 
 replace github.com/ipfs/go-ipfs-cmds => github.com/hlm-ipfs/go-ipfs-cmds v0.8.2-0.20220519061433-77febabb5ef4
-
-replace github.com/lucas-clemente/quic-go => github.com/hlm-ipfs/quic-go v0.27.2-0.20220615072548-89fc5cb4087f
-
-replace hlm-ipfs/x => github.com/hlm-ipfs/x v0.0.0-20211202054531-0de4aa04b33d
-
-replace github.com/libp2p/go-libp2p-quic-transport => github.com/hlm-ipfs/go-libp2p-quic-transport v0.17.1-0.20220711092919-ddb3d8ef6b16
-
-replace github.com/libp2p/go-libp2p => github.com/hlm-ipfs/go-libp2p v0.19.5-0.20220711093949-45fd6c377223
 
 go 1.17

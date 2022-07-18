@@ -5,8 +5,6 @@ import (
 	"errors"
 	_ "expvar"
 	"fmt"
-	libp2pquic "github.com/libp2p/go-libp2p-quic-transport"
-	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -195,11 +193,6 @@ Headers.
 	NoRemote:    true,
 	Extra:       commands.CreateCmdExtras(commands.SetDoesNotUseConfigAsInput(true)),
 	Run:         daemonFunc,
-}
-
-func init() {
-	libp2pquic.HolePunchTimeout = time.Second * 10
-	libp2pquic.QuicConfig.HandshakeIdleTimeout = time.Second * 10
 }
 
 // defaultMux tells mux to serve path using the default muxer. This is
@@ -978,13 +971,4 @@ func printVersion() {
 	fmt.Printf("Repo version: %d\n", fsrepo.RepoVersion)
 	fmt.Printf("System version: %s\n", runtime.GOARCH+"/"+runtime.GOOS)
 	fmt.Printf("Golang version: %s\n", runtime.Version())
-}
-
-func init() {
-	identify.ActivationThresh = 1
-	if os.Getenv("QUIC_AESECB_KEY") != "" {
-		os.Setenv("QUIC_AESECB_KEY", os.Getenv("QUIC_AESECB_KEY"))
-	} else {
-		os.Setenv("QUIC_AESECB_KEY", "album_unwind_fret")
-	}
 }

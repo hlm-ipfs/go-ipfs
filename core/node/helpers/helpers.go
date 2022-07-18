@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"context"
-	"github.com/libp2p/go-libp2p-core/network"
 	"go.uber.org/fx"
 )
 
@@ -14,7 +13,7 @@ type MetricsCtx context.Context
 // wrong way
 func LifecycleCtx(mctx MetricsCtx, lc fx.Lifecycle) context.Context {
 	ctx, cancel := context.WithCancel(mctx)
-	ctx=network.WithUseTransient(ctx, "test")
+	//ctx=network.WithUseTransient(ctx, "test") //不再使用瞬态连接存取文件
 	lc.Append(fx.Hook{
 		OnStop: func(_ context.Context) error {
 			cancel()
