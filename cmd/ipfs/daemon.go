@@ -15,9 +15,11 @@ import (
 	"sync"
 	"time"
 
-	multierror "github.com/hashicorp/go-multierror"
+	"hlm-ipfs/x/infras"
 
+	multierror "github.com/hashicorp/go-multierror"
 	version "github.com/ipfs/go-ipfs"
+	cmds "github.com/ipfs/go-ipfs-cmds"
 	utilmain "github.com/ipfs/go-ipfs/cmd/ipfs/util"
 	oldcmds "github.com/ipfs/go-ipfs/commands"
 	config "github.com/ipfs/go-ipfs/config"
@@ -32,12 +34,13 @@ import (
 	fsrepo "github.com/ipfs/go-ipfs/repo/fsrepo"
 	"github.com/ipfs/go-ipfs/repo/fsrepo/migrations"
 	"github.com/ipfs/go-ipfs/repo/fsrepo/migrations/ipfsfetcher"
-	sockets "github.com/libp2p/go-socket-activation"
-
-	cmds "github.com/ipfs/go-ipfs-cmds"
 	mprome "github.com/ipfs/go-metrics-prometheus"
 	options "github.com/ipfs/interface-go-ipfs-core/options"
 	goprocess "github.com/jbenet/goprocess"
+	libp2pquic "github.com/libp2p/go-libp2p-quic-transport"
+	"github.com/libp2p/go-libp2p/p2p/protocol/holepunch"
+	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
+	sockets "github.com/libp2p/go-socket-activation"
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr/net"
 	prometheus "github.com/prometheus/client_golang/prometheus"
@@ -193,6 +196,20 @@ Headers.
 	NoRemote:    true,
 	Extra:       commands.CreateCmdExtras(commands.SetDoesNotUseConfigAsInput(true)),
 	Run:         daemonFunc,
+}
+
+func init() {
+	identify.ActivationThresh = 1
+
+	holepunch.MaxRetries = 3
+	holepunch.DialTimeout = time.Second * 6
+	libp2pquic.HolePunchTimeout = time.Second * 6
+	libp2pquic.QuicConfig.HandshakeIdleTimeout = time.Second * 6
+
+	key := "QUIC_AESECB_KEY"
+	if str, ok := os.LookupEnv(key); !ok || len(str) == 0 {
+		infras.Throw(os.Setenv(key, "album_unwind_fret"))
+	}
 }
 
 // defaultMux tells mux to serve path using the default muxer. This is
