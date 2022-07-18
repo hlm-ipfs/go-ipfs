@@ -128,7 +128,6 @@ require (
 	github.com/cenkalti/backoff/v4 v4.1.3
 	github.com/ipfs/go-log/v2 v2.5.1
 	github.com/wumansgy/goEncrypt v1.0.0
-	go-micro.dev/v4 v4.4.0
 	go.opentelemetry.io/otel/exporters/zipkin v1.7.0
 	hlm-ipfs/ipfs-probe v0.0.0
 	hlm-ipfs/x v0.0.0
@@ -279,7 +278,6 @@ require (
 	google.golang.org/genproto v0.0.0-20211118181313-81c1377c94b1 // indirect
 	google.golang.org/grpc v1.46.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
-	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
