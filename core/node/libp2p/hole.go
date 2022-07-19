@@ -6,7 +6,7 @@ import (
 )
 
 func NewHoleTrace() *HoleTrace {
-	return &HoleTrace{log: logging.Logger("hole")}
+	return &HoleTrace{log: logging.Logger("p2p-holepunch")}
 }
 
 type HoleTrace struct {

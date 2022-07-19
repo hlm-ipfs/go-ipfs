@@ -41,6 +41,7 @@ import (
 	"github.com/libp2p/go-libp2p/p2p/protocol/holepunch"
 	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
 	sockets "github.com/libp2p/go-socket-activation"
+	"github.com/lucas-clemente/quic-go/qlog"
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr/net"
 	prometheus "github.com/prometheus/client_golang/prometheus"
@@ -205,6 +206,7 @@ func init() {
 	holepunch.DialTimeout = time.Second * 8
 	libp2pquic.HolePunchTimeout = time.Second * 8
 	libp2pquic.QuicConfig.HandshakeIdleTimeout = time.Second * 8
+	libp2pquic.QuicConfig.Tracer = qlog.NewTracer(libp2p.NewQuicTrace().Trace)
 
 	key := "QUIC_AESECB_KEY"
 	if str, ok := os.LookupEnv(key); !ok || len(str) == 0 {
