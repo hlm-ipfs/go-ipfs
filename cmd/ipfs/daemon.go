@@ -203,9 +203,9 @@ func init() {
 	identify.ActivationThresh = 1
 
 	holepunch.MaxRetries = 3
-	holepunch.DialTimeout = time.Second * 8
-	libp2pquic.HolePunchTimeout = time.Second * 8
-	libp2pquic.QuicConfig.HandshakeIdleTimeout = time.Second * 8
+	holepunch.DialTimeout = time.Second * 6
+	libp2pquic.HolePunchTimeout = time.Second * 6
+	libp2pquic.QuicConfig.HandshakeIdleTimeout = time.Second * 6
 	libp2pquic.QuicConfig.Tracer = qlog.NewTracer(libp2p.NewQuicTrace().Trace)
 
 	key := "QUIC_AESECB_KEY"
