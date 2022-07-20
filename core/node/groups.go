@@ -32,7 +32,6 @@ var BaseLibP2P = fx.Options(
 	fx.Provide(libp2p.ConnectionManager),
 	fx.Provide(libp2p.Host),
 	fx.Provide(libp2p.MultiaddrResolver),
-	fx.Provide(libp2p.ConnGater),
 	fx.Provide(libp2p.DiscoveryHandler),
 
 	fx.Invoke(libp2p.PNetChecker),

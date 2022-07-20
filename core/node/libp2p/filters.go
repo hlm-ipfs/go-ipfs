@@ -16,7 +16,7 @@ type filtersConnectionGater ma.Filters
 var _ connmgr.ConnectionGater = (*filtersConnectionGater)(nil)
 
 func (f *filtersConnectionGater) InterceptAddrDial(_ peer.ID, addr ma.Multiaddr) (allow bool) {
-	return !(*ma.Filters)(f).AddrBlocked(addr)
+	return !(*ma.Filters)(f).AddrBlocked(addr) && addr.Protocols()[0].Code == ma.P_IP4
 }
 
 func (f *filtersConnectionGater) InterceptPeerDial(p peer.ID) (allow bool) {
