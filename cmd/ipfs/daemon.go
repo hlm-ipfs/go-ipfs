@@ -202,7 +202,7 @@ Headers.
 func init() {
 	identify.ActivationThresh = 1
 
-	holepunch.MaxRetries = 3
+	holepunch.MaxRetries = 6
 	holepunch.DialTimeout = time.Second * 6
 	libp2pquic.HolePunchTimeout = time.Second * 6
 	libp2pquic.QuicConfig.HandshakeIdleTimeout = time.Second * 6
