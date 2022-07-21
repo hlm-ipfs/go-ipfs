@@ -160,6 +160,8 @@ github.com/btcsuite/winsvc v1.0.0/go.mod h1:jsenWakMcC0zFBFurPLEAyrnc/teJEM1O46f
 github.com/buger/jsonparser v0.0.0-20181115193947-bf1c66bbce23/go.mod h1:bbYlZJ7hK1yFx9hf58LP0zeX7UjIGs20ufpu3evjr+s=
 github.com/c-bata/go-prompt v0.2.5/go.mod h1:vFnjEGDIIA/Lib7giyE4E9c50Lvl8j0S+7FVlAwDAVw=
 github.com/casbin/casbin/v2 v2.1.2/go.mod h1:YcPU1XXisHhLzuxH9coDNf2FbKpjGlbCg3n9yuLkIJQ=
+github.com/ccding/go-stun/stun v0.0.0-20200514191101-4dc67bcdb029 h1:POmUHfxXdeyM8Aomg4tKDcwATCFuW+cYLkj6pwsw9pc=
+github.com/ccding/go-stun/stun v0.0.0-20200514191101-4dc67bcdb029/go.mod h1:Rpr5n9cGHYdM3S3IK8ROSUUUYjQOu+MSUCZDcJbYWi8=
 github.com/cenkalti/backoff v2.2.1+incompatible h1:tNowT99t7UNflLxfYYSlKYsBpXdEet03Pg2g16Swow4=
 github.com/cenkalti/backoff v2.2.1+incompatible/go.mod h1:90ReRw6GdpyfrHakVjL/QHaoyV4aDUVVkXQJJJ3NXXM=
 github.com/cenkalti/backoff/v4 v4.1.0/go.mod h1:scbssz8iZGpm3xbr14ovlUdkxfGXNInqkPWOWmG2CLw=
@@ -549,8 +551,8 @@ github.com/hlm-ipfs/go-libp2p v0.19.5-0.20220718073924-f1f43ba30e5d h1:drZdZ4PbE
 github.com/hlm-ipfs/go-libp2p v0.19.5-0.20220718073924-f1f43ba30e5d/go.mod h1:MIt8y481VDhUe4ErWi1a4bvt/CjjFfOq6kZTothWIXY=
 github.com/hlm-ipfs/go-libp2p-quic-transport v0.17.1-0.20220718073456-49e0349678bc h1:ADYZXJSN9uC2XkbGzgO52KYJNKGnjMSpVwUay6qD5jo=
 github.com/hlm-ipfs/go-libp2p-quic-transport v0.17.1-0.20220718073456-49e0349678bc/go.mod h1:johwyhDGC6OJJar7vdB9KAg/g6inK2cq+4KMZqgkhAM=
-github.com/hlm-ipfs/ipfs-probe v0.0.0-20220706013505-923e21b91f09 h1:XQjgrWa8kB4vrl3tzlxkJq5Jm4544pEVSpMtXiNB//0=
-github.com/hlm-ipfs/ipfs-probe v0.0.0-20220706013505-923e21b91f09/go.mod h1:l/iH38wt+jCmSlqoy17Aq7aw3D2t+8eptggS7+KQ0q8=
+github.com/hlm-ipfs/ipfs-probe v0.0.0-20220721081850-e20b2257bc97 h1:ivuvig/aQmjxi1RcPqBwO4zTS+sCQztgnzot/takDb8=
+github.com/hlm-ipfs/ipfs-probe v0.0.0-20220721081850-e20b2257bc97/go.mod h1:v8bQCZXt713NVcpVNjjUEBF1DrAnMQkJk3lGeFNPDuo=
 github.com/hlm-ipfs/quic-go v0.27.2-0.20220615072548-89fc5cb4087f h1:iuMOayqTZJy4gFVRovrB5Hb3VMQuamkcExVKPaEUT5Q=
 github.com/hlm-ipfs/quic-go v0.27.2-0.20220615072548-89fc5cb4087f/go.mod h1:3xtSus9rgNODgWRkl1OnfEu5BsNe7XIT5fw+j3iybkY=
 github.com/hlm-ipfs/x v0.0.0-20211202054531-0de4aa04b33d h1:8LwqY86TlIQ6zlbUobQ6d/qbRDWai4qejrcbcgNf4iM=
