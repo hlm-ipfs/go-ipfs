@@ -46,7 +46,10 @@ func RelayService(enable bool, relayOpts config.RelayService) func() (opts Libp2
 
 func AutoRelay(staticRelays []string, peerChan <-chan peer.AddrInfo) func() (opts Libp2pOpts, err error) {
 	return func() (opts Libp2pOpts, err error) {
-		var autoRelayOpts []autorelay.Option
+		var autoRelayOpts = []autorelay.Option{
+			autorelay.WithBootDelay(0),
+			autorelay.WithMinCandidates(1),
+		}
 		if len(staticRelays) > 0 {
 			static := make([]peer.AddrInfo, 0, len(staticRelays))
 			for _, s := range staticRelays {
