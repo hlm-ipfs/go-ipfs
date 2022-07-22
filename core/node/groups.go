@@ -157,7 +157,10 @@ func LibP2P(bcfg *BuildCfg, cfg *config.Config) fx.Option {
 		fx.Provide(libp2p.RelayTransport(enableRelayTransport)),
 		fx.Provide(libp2p.RelayService(enableRelayService, cfg.Swarm.RelayService)),
 		fx.Provide(libp2p.Transports(cfg.Swarm.Transports)),
-		fx.Invoke(libp2p.StartListening(cfg.Addresses.Swarm)),
+
+		fx.Provide(libp2p.DefaultListenAddrs(cfg.Addresses.Swarm)),
+		//fx.Invoke(libp2p.StartListening(cfg.Addresses.Swarm)), //由Libp2p构造host的时候自动listen
+
 		fx.Invoke(libp2p.SetupDiscovery(cfg.Discovery.MDNS.Enabled, cfg.Discovery.MDNS.Interval)),
 		fx.Provide(libp2p.ForceReachability(cfg.Internal.Libp2pForceReachability)),
 		fx.Provide(libp2p.HolePunching(cfg.Swarm.EnableHolePunching, enableRelayClient)),

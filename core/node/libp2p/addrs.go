@@ -133,3 +133,10 @@ func StartListening(addresses []string) func(host host.Host) error {
 		return nil
 	}
 }
+
+func DefaultListenAddrs(addresses []string) func() (opts Libp2pOpts, err error) {
+	return func() (opts Libp2pOpts, err error) {
+		opts.Opts = append(opts.Opts, libp2p.ListenAddrStrings(addresses...))
+		return
+	}
+}
