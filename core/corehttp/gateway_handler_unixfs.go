@@ -7,7 +7,6 @@ import (
 	"html"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 	"time"
 
 	files "github.com/ipfs/go-ipfs-files"
@@ -40,14 +39,16 @@ func (i *gatewayHandler) serveUnixFS(ctx context.Context, w http.ResponseWriter,
 				internalWebError(w, err)
 				return
 			}
+			defer f.Close()
 			cryptText, err := goEncrypt.DesCbcDecrypt(old, []byte(password),[]byte("wumansgy")) //解密得到密文,可以自己传入初始化向量,如果不传就使用默认的初始化向量,8字节
 			if err != nil {
 				internalWebError(w, err)
 				return
 			}
-			f= files.NewBytesFile([]byte(cryptText))
-			size, err := f.Size()
-			w.Header().Set("Content-Length", strconv.FormatInt(size, 10))
+			//加密文件不支持分片传
+			w.Write(cryptText)
+			return
+
 		}
 		logger.Debugw("serving unixfs file", "path", contentPath)
 		i.serveFile(ctx, w, r, resolvedPath, contentPath, f, begin)
