@@ -1,10 +1,12 @@
 package corehttp
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"github.com/wumansgy/goEncrypt"
 	"html"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -31,6 +33,7 @@ func (i *gatewayHandler) serveUnixFS(ctx context.Context, w http.ResponseWriter,
 	defer dr.Close()
 	// Handling Unixfs file
 	if f, ok := dr.(files.File); ok {
+		r.Body.Close()
 		//远程查看密码:
 		args:=r.URL.Query()
 		password:=args.Get("code")
@@ -46,12 +49,14 @@ func (i *gatewayHandler) serveUnixFS(ctx context.Context, w http.ResponseWriter,
 				internalWebError(w, err)
 				return
 			}
-			//加密文件不支持分片传
-			f= files.NewBytesFile([]byte(cryptText))
-			size, err := f.Size()
+		    respFiles:= files.NewBytesFile([]byte(cryptText))
+			size, err := respFiles.Size()
+			defer respFiles.Close()
+
 			w.Header().Set("Content-Length", strconv.FormatInt(size, 10))
-			w.Write(cryptText)
-			return
+			_, err = io.Copy(w, bytes.NewBuffer(cryptText))
+			//加密文件不支持分片传
+			//return
 
 		}
 		logger.Debugw("serving unixfs file", "path", contentPath)
