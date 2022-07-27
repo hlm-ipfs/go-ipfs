@@ -8,8 +8,11 @@ import (
 	"html"
 	"io"
 	"io/ioutil"
+	"mime"
 	"net/http"
+	gopath "path"
 	"strconv"
+	"strings"
 	"time"
 
 	files "github.com/ipfs/go-ipfs-files"
@@ -53,10 +56,33 @@ func (i *gatewayHandler) serveUnixFS(ctx context.Context, w http.ResponseWriter,
 			size, err := respFiles.Size()
 			defer respFiles.Close()
 
+			// Set Content-Disposition
+			name := addContentDispositionHeader(w, r, contentPath)
+			var ctype string
+			if _, isSymlink := respFiles.(*files.Symlink); isSymlink {
+				// We should be smarter about resolving symlinks but this is the
+				// "most correct" we can be without doing that.
+				ctype = "inode/symlink"
+			} else {
+				ctype = mime.TypeByExtension(gopath.Ext(name))
+				if ctype == "" {
+
+				}
+				// Strip the encoding from the HTML Content-Type header and let the
+				// browser figure it out.
+				//
+				// Fixes https://github.com/ipfs/go-ipfs/issues/2203
+				if strings.HasPrefix(ctype, "text/html;") {
+					ctype = "text/html"
+				}
+			}
+			// Setting explicit Content-Type to avoid mime-type sniffing on the client
+			// (unifies behavior across gateways and web browsers)
+			w.Header().Set("Content-Type", ctype)
 			w.Header().Set("Content-Length", strconv.FormatInt(size, 10))
 			_, err = io.Copy(w, bytes.NewBuffer(cryptText))
 			//加密文件不支持分片传
-			//return
+			return
 
 		}
 		logger.Debugw("serving unixfs file", "path", contentPath)
