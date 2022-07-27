@@ -4,8 +4,6 @@ package assets
 import (
 	"embed"
 	"fmt"
-	"github.com/ipfs/go-ipfs/core"
-	"github.com/ipfs/go-ipfs/core/coreapi"
 	"io"
 	"io/fs"
 	gopath "path"

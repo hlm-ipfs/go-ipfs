@@ -6,7 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/ipfs/go-ipfs/auth"
+	"github.com/ipfs/kubo/auth"
 	"github.com/wumansgy/goEncrypt"
 	"io"
 	"io/ioutil"

@@ -7,7 +7,7 @@ package corehttp
 import (
 	"context"
 	"fmt"
-	"github.com/ipfs/go-ipfs/auth"
+	"github.com/ipfs/kubo/auth"
 	"net"
 	"net/http"
 	"time"

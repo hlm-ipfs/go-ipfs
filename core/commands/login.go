@@ -3,7 +3,7 @@ package commands
 import (
 	"errors"
 	cmds "github.com/ipfs/go-ipfs-cmds"
-	"github.com/ipfs/go-ipfs/auth"
+	"github.com/ipfs/kubo/auth"
 )
 
 var LoginCmd = &cmds.Command{

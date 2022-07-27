@@ -5,6 +5,7 @@ import (
 	"errors"
 	_ "expvar"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"net/http"
 	_ "net/http/pprof"
@@ -33,7 +34,6 @@ import (
 	fsrepo "github.com/ipfs/kubo/repo/fsrepo"
 	"github.com/ipfs/kubo/repo/fsrepo/migrations"
 	"github.com/ipfs/kubo/repo/fsrepo/migrations/ipfsfetcher"
-	sockets "github.com/libp2p/go-socket-activation"
 
 	cmds "github.com/ipfs/go-ipfs-cmds"
 	mprome "github.com/ipfs/go-metrics-prometheus"
