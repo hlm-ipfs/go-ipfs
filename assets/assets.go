@@ -10,6 +10,9 @@ import (
 	"io/fs"
 	gopath "path"
 	"strconv"
+
+	"github.com/ipfs/kubo/core"
+	"github.com/ipfs/kubo/core/coreapi"
 	"strings"
 
 	"github.com/cespare/xxhash"

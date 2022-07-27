@@ -8,16 +8,15 @@ import (
 
 	blockstore "github.com/ipfs/go-ipfs-blockstore"
 	util "github.com/ipfs/go-ipfs-util"
-	"github.com/ipfs/go-ipfs/config"
 	"github.com/ipfs/go-log"
+	"github.com/ipfs/kubo/config"
 	"github.com/libp2p/go-libp2p-core/peer"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 
-	"github.com/ipfs/go-ipfs/core/node/libp2p"
-	"github.com/ipfs/go-ipfs/p2p"
+	"github.com/ipfs/kubo/core/node/libp2p"
+	"github.com/ipfs/kubo/p2p"
 
 	offline "github.com/ipfs/go-ipfs-exchange-offline"
-	offroute "github.com/ipfs/go-ipfs-routing/offline"
 	uio "github.com/ipfs/go-unixfs/io"
 
 	"github.com/dustin/go-humanize"
@@ -157,18 +156,19 @@ func LibP2P(bcfg *BuildCfg, cfg *config.Config) fx.Option {
 		fx.Provide(libp2p.RelayTransport(enableRelayTransport)),
 		fx.Provide(libp2p.RelayService(enableRelayService, cfg.Swarm.RelayService)),
 		fx.Provide(libp2p.Transports(cfg.Swarm.Transports)),
-
 		fx.Provide(libp2p.DefaultListenAddrs(cfg.Addresses.Swarm)),
 		//fx.Invoke(libp2p.StartListening(cfg.Addresses.Swarm)), //由Libp2p构造host的时候自动listen
-
-		fx.Invoke(libp2p.SetupDiscovery(cfg.Discovery.MDNS.Enabled, cfg.Discovery.MDNS.Interval)),
+		fx.Invoke(libp2p.SetupDiscovery(cfg.Discovery.MDNS.Enabled)),
 		fx.Provide(libp2p.ForceReachability(cfg.Internal.Libp2pForceReachability)),
 		fx.Provide(libp2p.HolePunching(cfg.Swarm.EnableHolePunching, enableRelayClient)),
 
 		fx.Provide(libp2p.Security(!bcfg.DisableEncryptedConnections, cfg.Swarm.Transports)),
 
 		fx.Provide(libp2p.Routing),
+		fx.Provide(libp2p.ContentRouting),
+
 		fx.Provide(libp2p.BaseRouting(cfg.Experimental.AcceleratedDHTClient)),
+		fx.Provide(libp2p.DelegatedRouting(cfg.Routing.Routers)),
 		maybeProvide(libp2p.PubsubRouter, bcfg.getOpt("ipnsps")),
 
 		maybeProvide(libp2p.BandwidthCounter, !cfg.Swarm.DisableBandwidthMetrics),
@@ -315,7 +315,9 @@ func Offline(cfg *config.Config) fx.Option {
 		fx.Provide(offline.Exchange),
 		fx.Provide(DNSResolver),
 		fx.Provide(Namesys(0)),
-		fx.Provide(offroute.NewOfflineRouter),
+		fx.Provide(libp2p.Routing),
+		fx.Provide(libp2p.ContentRouting),
+		fx.Provide(libp2p.OfflineRouting),
 		OfflineProviders(cfg.Experimental.StrategicProviding, cfg.Experimental.AcceleratedDHTClient, cfg.Reprovider.Strategy, cfg.Reprovider.Interval),
 	)
 }
