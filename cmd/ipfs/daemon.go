@@ -1,11 +1,9 @@
 package main
 
 import (
-	"context"
 	"errors"
 	_ "expvar"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"net/http"
 	_ "net/http/pprof"
@@ -48,7 +46,6 @@ import (
 	manet "github.com/multiformats/go-multiaddr/net"
 	prometheus "github.com/prometheus/client_golang/prometheus"
 	promauto "github.com/prometheus/client_golang/prometheus/promauto"
-	probe "hlm-ipfs/ipfs-probe"
 )
 
 const (
@@ -546,46 +543,6 @@ func daemonFunc(req *cmds.Request, re cmds.ResponseEmitter, env cmds.Environment
 
 	// initialize metrics collector
 	prometheus.MustRegister(&corehttp.IpfsNodeCollector{Node: node})
-	if os.Getenv("MY_NODE_IP") != "" {
-		resp, err := http.Get(fmt.Sprintf("http://%+v:8702/info", os.Getenv("MY_NODE_IP")))
-		if err != nil {
-			return err
-		}
-		//We Read the response body on the line below.
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-		probe.HostID = string(body)
-	}
-	go func() {
-		probe.ReportDuration = time.Minute * 5
-		probe.NewCollector(cctx.Context(), node, "http://103.44.247.16:31686/edmc/edmcNode/Report")
-	}()
-	go func(ctx context.Context) {
-		ticker := time.NewTicker(30 * time.Second)
-		for {
-			select {
-			case <-ctx.Done():
-				ticker.Stop()
-				return
-			case t := <-ticker.C:
-				log.Infof("Tick at %+v", t)
-				resp, err := http.Get("http://ifconfig.me")
-				if err != nil {
-					log.Errorf("%+v", err.Error())
-					return
-				}
-				body, err := ioutil.ReadAll(resp.Body)
-				resp.Body.Close()
-				if err != nil {
-					log.Errorf("%+v", err.Error())
-					return
-				}
-				log.Infof(" curl ifconfig.me: %+v ,code: %+v", string(body), resp.StatusCode)
-			}
-		}
-	}(cctx.Context())
 	// start MFS pinning thread
 	startPinMFS(daemonConfigPollInterval, cctx, &ipfsPinMFSNode{node})
 
