@@ -119,7 +119,6 @@ require (
 	github.com/cenkalti/backoff/v4 v4.1.3
 	github.com/ipfs/go-delegated-routing v0.3.0
 	github.com/ipfs/go-log/v2 v2.5.1
-	github.com/libp2p/go-libp2p-quic-transport v0.16.1
 	github.com/lucas-clemente/quic-go v0.27.1
 	github.com/wumansgy/goEncrypt v1.0.0
 	go.opentelemetry.io/otel/exporters/zipkin v1.7.0
@@ -193,7 +192,6 @@ require (
 	github.com/libp2p/go-libp2p-discovery v0.7.0 // indirect
 	github.com/libp2p/go-libp2p-gostream v0.3.0 // indirect
 	github.com/libp2p/go-libp2p-swarm v0.11.0 // indirect
-	github.com/libp2p/go-libp2p-tls v0.3.1 // indirect
 	github.com/libp2p/go-libp2p-xor v0.1.0 // indirect
 	github.com/libp2p/go-mplex v0.7.0 // indirect
 	github.com/libp2p/go-msgio v0.2.0 // indirect
@@ -205,8 +203,8 @@ require (
 	github.com/libp2p/zeroconf/v2 v2.1.1 // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
 	github.com/marten-seemann/qtls-go1-16 v0.1.5 // indirect
-	github.com/marten-seemann/qtls-go1-17 v0.1.1 // indirect
-	github.com/marten-seemann/qtls-go1-18 v0.1.1 // indirect
+	github.com/marten-seemann/qtls-go1-17 v0.1.2 // indirect
+	github.com/marten-seemann/qtls-go1-18 v0.1.2 // indirect
 	github.com/marten-seemann/tcp v0.0.0-20210406111302-dfbc87cc63fd // indirect
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
@@ -278,13 +276,12 @@ require (
 )
 
 replace (
-	github.com/libp2p/go-libp2p => github.com/hlm-ipfs/go-libp2p v0.19.5-0.20220718073924-f1f43ba30e5d
-	github.com/libp2p/go-libp2p-quic-transport => github.com/hlm-ipfs/go-libp2p-quic-transport v0.17.1-0.20220718073456-49e0349678bc
-	github.com/lucas-clemente/quic-go => github.com/hlm-ipfs/quic-go v0.27.2-0.20220615072548-89fc5cb4087f
-	hlm-ipfs/x => github.com/hlm-ipfs/x v0.0.0-20211202054531-0de4aa04b33d
-	hlm-ipfs/ipfs-probe => github.com/hlm-ipfs/ipfs-probe v0.0.0-20220727021710-525f712d47fa
 	github.com/ipfs/go-bitswap => github.com/hlm-ipfs/go-bitswap v0.7.0
 	github.com/ipfs/go-ipfs-cmds => github.com/hlm-ipfs/go-ipfs-cmds v0.8.2-0.20220519061433-77febabb5ef4
+	github.com/libp2p/go-libp2p => github.com/hlm-ipfs/go-libp2p v0.20.2-0.20220728025249-8c459a1dc831
+	github.com/lucas-clemente/quic-go => github.com/hlm-ipfs/quic-go v0.27.1-0.20220728031410-5b14f35e1db1
+	hlm-ipfs/ipfs-probe => github.com/hlm-ipfs/ipfs-probe v0.0.0-20220727021710-525f712d47fa
+	hlm-ipfs/x => github.com/hlm-ipfs/x v0.0.0-20211202054531-0de4aa04b33d
 )
 
 go 1.17
