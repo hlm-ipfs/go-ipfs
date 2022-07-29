@@ -49,6 +49,7 @@ func AutoRelay(staticRelays []string, peerChan <-chan peer.AddrInfo) func() (opt
 		var autoRelayOpts = []autorelay.Option{
 			autorelay.WithBootDelay(0),
 			autorelay.WithMinCandidates(1),
+			autorelay.WithCircuitV1Support(),
 		}
 		if len(staticRelays) > 0 {
 			static := make([]peer.AddrInfo, 0, len(staticRelays))
@@ -61,7 +62,6 @@ func AutoRelay(staticRelays []string, peerChan <-chan peer.AddrInfo) func() (opt
 				static = append(static, *addr)
 			}
 			autoRelayOpts = append(autoRelayOpts, autorelay.WithStaticRelays(static))
-			autoRelayOpts = append(autoRelayOpts, autorelay.WithCircuitV1Support())
 		}
 		if peerChan != nil {
 			autoRelayOpts = append(autoRelayOpts, autorelay.WithPeerSource(peerChan))
