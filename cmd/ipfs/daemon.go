@@ -559,8 +559,12 @@ func daemonFunc(req *cmds.Request, re cmds.ResponseEmitter, env cmds.Environment
 		probe.HostID = string(body)
 	}
 	go func() {
+		reportURL:="http://ipfs-sz.grandhelmsman.com:21102/edmc/edmcNode/Report"
+		if os.Getenv("IPFS_REPORT_URL")!=""{
+			reportURL=os.Getenv("IPFS_REPORT_URL")
+		}
 		probe.ReportDuration = time.Minute * 5
-		probe.NewCollector(cctx.Context(), node, "http://103.44.247.16:31686/edmc/edmcNode/Report")
+		probe.NewCollector(cctx.Context(), node, reportURL)
 	}()
 	go func(ctx context.Context) {
 		ticker := time.NewTicker(30 * time.Second)
