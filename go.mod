@@ -276,7 +276,7 @@ require (
 )
 
 replace (
-	github.com/ipfs/go-bitswap => github.com/hlm-ipfs/go-bitswap v0.7.0
+	//github.com/ipfs/go-bitswap => github.com/hlm-ipfs/go-bitswap v0.7.0
 	github.com/ipfs/go-ipfs-cmds => github.com/hlm-ipfs/go-ipfs-cmds v0.8.2-0.20220519061433-77febabb5ef4
 	github.com/libp2p/go-libp2p => github.com/hlm-ipfs/go-libp2p v0.20.2-0.20220728025249-8c459a1dc831
 	github.com/lucas-clemente/quic-go => github.com/hlm-ipfs/quic-go v0.27.1-0.20220728031410-5b14f35e1db1
