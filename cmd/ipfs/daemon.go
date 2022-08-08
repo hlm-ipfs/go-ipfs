@@ -5,13 +5,18 @@ import (
 	"errors"
 	_ "expvar"
 	"fmt"
+	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/libp2p/go-libp2p-core/protocol"
+	p2phttp "github.com/libp2p/go-libp2p-http"
 	"io/ioutil"
 	"net"
 	"net/http"
-	_ "net/http/pprof"
+	"net/http/httputil"
+	"net/url"
 	"os"
 	"runtime"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
@@ -531,7 +536,9 @@ func daemonFunc(req *cmds.Request, re cmds.ResponseEmitter, env cmds.Environment
 	if err != nil {
 		return err
 	}
-
+	if err := serveHTTPProxy(req, cctx); err != nil {
+		return err
+	}
 	// Add ipfs version info to prometheus metrics
 	var ipfsInfoMetric = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "ipfs_info",
@@ -559,9 +566,9 @@ func daemonFunc(req *cmds.Request, re cmds.ResponseEmitter, env cmds.Environment
 		probe.HostID = string(body)
 	}
 	go func() {
-		reportURL:="http://ipfs-sz.grandhelmsman.com:21102/edmc/edmcNode/Report"
-		if os.Getenv("IPFS_REPORT_URL")!=""{
-			reportURL=os.Getenv("IPFS_REPORT_URL")
+		reportURL := "http://ipfs-sz.grandhelmsman.com:21102/edmc/edmcNode/Report"
+		if os.Getenv("IPFS_REPORT_URL") != "" {
+			reportURL = os.Getenv("IPFS_REPORT_URL")
 		}
 		probe.ReportDuration = time.Minute * 5
 		probe.NewCollector(cctx.Context(), node, reportURL)
@@ -994,4 +1001,64 @@ func printVersion() {
 	fmt.Printf("Repo version: %d\n", fsrepo.RepoVersion)
 	fmt.Printf("System version: %s\n", runtime.GOARCH+"/"+runtime.GOOS)
 	fmt.Printf("Golang version: %s\n", runtime.Version())
+}
+
+func serveHTTPProxy(req *cmds.Request, cctx *oldcmds.Context) error {
+	node, err := cctx.ConstructNode()
+	if err != nil {
+		return fmt.Errorf("serveHTTPProxy: ConstructNode() failed: %s", err)
+	}
+    upload, err := ma.NewMultiaddr("/ip4/127.0.0.1/tcp/5001")
+	if err != nil {
+		return err
+	}
+
+	_, err = node.P2P.ForwardRemote(node.Context(), "/api", upload, false)
+	if err != nil {
+		return err
+	}
+
+	download, err := ma.NewMultiaddr("/ip4/127.0.0.1/tcp/8080")
+	if err != nil {
+		return err
+	}
+	_, err = node.P2P.ForwardRemote(node.Context(), "/gateway", download, false)
+	if err != nil {
+		return err
+	}
+	go func() {
+		mux := http.NewServeMux()
+		mux.HandleFunc("/", func(w http.ResponseWriter, request *http.Request) {
+			xprotocol := request.Header.Get("X-Protocol")
+			xpeer := request.Header.Get("X-Peer")
+			if xprotocol == "" || xpeer == "" {
+				handleError(w, "X-Protocol,X-Peer header needed", nil, 400)
+				return
+			}
+			if _, err := peer.Decode(xpeer); err != nil {
+				handleError(w, "X-Peer invalid", err, 400)
+				return
+			}
+			request.Host = "" // Let URL's Host take precedence.
+			request.URL.Path = strings.TrimLeft(request.RequestURI,"/")
+			target, err := url.Parse(fmt.Sprintf("libp2p://%s", xpeer))
+			if err != nil {
+				handleError(w, "failed to parse url", err, 400)
+				return
+			}
+			rt := p2phttp.NewTransport(node.PeerHost, p2phttp.ProtocolOption(protocol.ID(xprotocol)))
+			proxy := httputil.NewSingleHostReverseProxy(target)
+			proxy.Transport = rt
+			proxy.ServeHTTP(w, request)
+		})
+		http.ListenAndServe(":8082", mux)
+	}()
+	return nil
+}
+func handleError(w http.ResponseWriter, msg string, err error, code int) {
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %s", msg, err), code)
+	} else {
+		http.Error(w, fmt.Sprintf("%s", msg), code)
+	}
 }
