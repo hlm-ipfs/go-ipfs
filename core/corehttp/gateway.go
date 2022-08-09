@@ -20,6 +20,7 @@ type GatewayConfig struct {
 	Writable              bool
 	PathPrefixes          []string
 	FastDirIndexThreshold int
+	RepoRoot              string
 }
 
 // A helper function to clean up a set of headers:
@@ -42,7 +43,7 @@ func cleanHeaderSet(headers []string) []string {
 	return result
 }
 
-func GatewayOption(writable bool, paths ...string) ServeOption {
+func GatewayOption(writable bool, repoRoot string,paths ...string) ServeOption {
 	return func(n *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
 		cfg, err := n.Repo.Config()
 		if err != nil {
@@ -98,6 +99,7 @@ func GatewayOption(writable bool, paths ...string) ServeOption {
 			Writable:              writable,
 			PathPrefixes:          cfg.Gateway.PathPrefixes,
 			FastDirIndexThreshold: int(cfg.Gateway.FastDirIndexThreshold.WithDefault(100)),
+			RepoRoot: repoRoot,
 		}, api)
 		if err != nil {
 			return nil, err

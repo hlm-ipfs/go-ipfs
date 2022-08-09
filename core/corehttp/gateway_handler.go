@@ -67,6 +67,7 @@ type redirectTemplateData struct {
 // gatewayHandler is a HTTP handler that serves IPFS objects (accessible by default at /ipfs/<path>)
 // (it serves requests like GET /ipfs/QmVRzPKPzNtSrEzBFm2UZfxmPAgnaLke4DMcerbsGGSaFe/link)
 type gatewayHandler struct {
+	cache   string
 	config     GatewayConfig
 	api        coreiface.CoreAPI
 	offlineApi coreiface.CoreAPI
@@ -218,7 +219,12 @@ func newGatewayHandler(c GatewayConfig, api coreiface.CoreAPI) (*gatewayHandler,
 	if err != nil {
 		return nil, err
 	}
+	root:=gopath.Join(c.RepoRoot,"cache")
+	if err:=os.MkdirAll(root,0755);err!=nil{
+		return nil, err
+	}
 	i := &gatewayHandler{
+		cache:      root,
 		config:     c,
 		api:        api,
 		offlineApi: offlineApi,

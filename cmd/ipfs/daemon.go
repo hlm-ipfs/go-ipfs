@@ -715,7 +715,7 @@ func serveHTTPApi(req *cmds.Request, cctx *oldcmds.Context) (<-chan error, error
 	// only the webui objects are allowed.
 	// if you know what you're doing, go ahead and pass --unrestricted-api.
 	unrestricted, _ := req.Options[unrestrictedApiAccessKwd].(bool)
-	gatewayOpt := corehttp.GatewayOption(false, corehttp.WebUIPaths...)
+	gatewayOpt := corehttp.GatewayOption(false, cctx.ConfigRoot,corehttp.WebUIPaths...)
 	if unrestricted {
 		gatewayOpt = corehttp.GatewayOption(true, "/ipfs", "/ipns")
 	}
@@ -857,7 +857,7 @@ func serveHTTPGateway(req *cmds.Request, cctx *oldcmds.Context) (<-chan error, e
 	var opts = []corehttp.ServeOption{
 		corehttp.MetricsCollectionOption("gateway"),
 		corehttp.HostnameOption(),
-		corehttp.GatewayOption(writable, "/ipfs", "/ipns"),
+		corehttp.GatewayOption(writable, cctx.ConfigRoot,"/ipfs", "/ipns"),
 		corehttp.VersionOption(),
 		corehttp.CheckVersionOption(),
 		corehttp.CommandsROOption(cmdctx),

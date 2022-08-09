@@ -5,13 +5,10 @@ import (
 	"fmt"
 	"github.com/wumansgy/goEncrypt"
 	"html"
-	"io"
 	"io/ioutil"
-	"mime"
 	"net/http"
-	gopath "path"
-	"strconv"
-	"strings"
+	"os"
+	"path/filepath"
 	"time"
 
 	files "github.com/ipfs/go-ipfs-files"
@@ -37,64 +34,40 @@ func (i *gatewayHandler) serveUnixFS(ctx context.Context, w http.ResponseWriter,
 	if f, ok := dr.(files.File); ok {
 		r.Body.Close()
 		//远程查看密码:
-		args:=r.URL.Query()
-		password:=args.Get("code")
-		if password!="" {
+		args := r.URL.Query()
+		password := args.Get("code")
+		if password != "" {
+			filename := filepath.Join(i.cache, resolvedPath.Cid().String())
+			if _, err := os.Stat(filename); err == nil {
+				if cacheFile, err := os.Open(filename); cacheFile != nil && err == nil {
+					defer cacheFile.Close()
+					i.serveCacheFile(ctx, w, r, resolvedPath, contentPath, cacheFile, begin)
+					return
+				}
+			}
 			old, err := ioutil.ReadAll(f)
 			if err != nil {
 				internalWebError(w, err)
 				return
 			}
 			defer f.Close()
-			cryptText, err := goEncrypt.DesCbcDecrypt(old, []byte(password),[]byte("wumansgy")) //解密得到密文,可以自己传入初始化向量,如果不传就使用默认的初始化向量,8字节
+			cryptText, err := goEncrypt.DesCbcDecrypt(old, []byte(password), []byte("wumansgy")) //解密得到密文,可以自己传入初始化向量,如果不传就使用默认的初始化向量,8字节
 			if err != nil {
 				internalWebError(w, err)
 				return
 			}
-			respFiles:= files.NewBytesFile([]byte(cryptText))
-			size, err := respFiles.Size()
-			defer respFiles.Close()
-
-			// Set Content-Disposition
-			name := addContentDispositionHeader(w, r, contentPath)
-			var ctype string
-			if _, isSymlink := respFiles.(*files.Symlink); isSymlink {
-				// We should be smarter about resolving symlinks but this is the
-				// "most correct" we can be without doing that.
-				ctype = "inode/symlink"
+			if err := ioutil.WriteFile(filename, cryptText, 0); err != nil {
+				internalWebError(w, err)
+				return
+			}
+			if cacheFile, err := os.Open(filename); cacheFile != nil && err == nil {
+				defer cacheFile.Close()
+				i.serveCacheFile(ctx, w, r, resolvedPath, contentPath, cacheFile, begin)
+				return
 			} else {
-				ctype = mime.TypeByExtension(gopath.Ext(name))
-				if ctype == "" {
-
-				}
-				// Strip the encoding from the HTML Content-Type header and let the
-				// browser figure it out.
-				//
-				// Fixes https://github.com/ipfs/go-ipfs/issues/2203
-				if strings.HasPrefix(ctype, "text/html;") {
-					ctype = "text/html"
-				}
-			}
-			// Setting explicit Content-Type to avoid mime-type sniffing on the client
-			// (unifies behavior across gateways and web browsers)
-			w.Header().Set("Accept-Ranges","none")
-			w.Header().Set("Content-Type", ctype)
-			w.WriteHeader(http.StatusOK)
-			w.Header().Set("Content-Length", strconv.FormatInt(size, 10))
-			xcontent := &lazySeeker{
-				size:   size,
-				reader: respFiles,
-			}
-			if _,err:=xcontent.Seek(0, io.SeekStart);err!=nil{
 				internalWebError(w, err)
 				return
 			}
-			if _, err = io.Copy(w, xcontent);err!=nil{
-				internalWebError(w, err)
-				return
-			}
-			return
-
 		}
 		logger.Debugw("serving unixfs file", "path", contentPath)
 		i.serveFile(ctx, w, r, resolvedPath, contentPath, f, begin)

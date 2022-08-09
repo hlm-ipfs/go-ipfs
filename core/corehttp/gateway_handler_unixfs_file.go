@@ -6,6 +6,7 @@ import (
 	"io"
 	"mime"
 	"net/http"
+	"os"
 	gopath "path"
 	"strings"
 	"time"
@@ -75,6 +76,72 @@ func (i *gatewayHandler) serveFile(ctx context.Context, w http.ResponseWriter, r
 		if strings.HasPrefix(ctype, "text/html;") {
 			ctype = "text/html"
 		}
+	}
+	// Setting explicit Content-Type to avoid mime-type sniffing on the client
+	// (unifies behavior across gateways and web browsers)
+	w.Header().Set("Content-Type", ctype)
+
+	// special fixup around redirects
+	w = &statusResponseWriter{w}
+
+	// ServeContent will take care of
+	// If-None-Match+Etag, Content-Length and range requests
+	_, dataSent, _ := ServeContent(w, r, name, modtime, content)
+
+	// Was response successful?
+	if dataSent {
+		// Update metrics
+		i.unixfsFileGetMetric.WithLabelValues(contentPath.Namespace()).Observe(time.Since(begin).Seconds())
+	}
+}
+func (i *gatewayHandler) serveCacheFile(ctx context.Context, w http.ResponseWriter, r *http.Request, resolvedPath ipath.Resolved, contentPath ipath.Path, file *os.File, begin time.Time) {
+	_, span := tracing.Span(ctx, "Gateway", "ServeFile", trace.WithAttributes(attribute.String("path", resolvedPath.String())))
+	defer span.End()
+
+	// Set Cache-Control and read optional Last-Modified time
+	modtime := addCacheControlHeaders(w, r, contentPath, resolvedPath.Cid())
+
+	// Set Content-Disposition
+	name := addContentDispositionHeader(w, r, contentPath)
+
+	fi, err := file.Stat()
+	if err != nil {
+		http.Error(w, "cannot serve files with unknown sizes", http.StatusBadGateway)
+		return
+	}
+
+	// Lazy seeker enables efficient range-requests and HTTP HEAD responses
+	content := &lazySeeker{
+		size:   fi.Size(),
+		reader: file,
+	}
+
+	// Calculate deterministic value for Content-Type HTTP header
+	// (we prefer to do it here, rather than using implicit sniffing in http.ServeContent)
+	var ctype string
+	ctype = mime.TypeByExtension(gopath.Ext(name))
+	if ctype == "" {
+		// uses https://github.com/gabriel-vasile/mimetype library to determine the content type.
+		// Fixes https://github.com/ipfs/kubo/issues/7252
+		mimeType, err := mimetype.DetectReader(content)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("cannot detect content-type: %s", err.Error()), http.StatusInternalServerError)
+			return
+		}
+
+		ctype = mimeType.String()
+		_, err = content.Seek(0, io.SeekStart)
+		if err != nil {
+			http.Error(w, "seeker can't seek", http.StatusInternalServerError)
+			return
+		}
+	}
+	// Strip the encoding from the HTML Content-Type header and let the
+	// browser figure it out.
+	//
+	// Fixes https://github.com/ipfs/kubo/issues/2203
+	if strings.HasPrefix(ctype, "text/html;") {
+		ctype = "text/html"
 	}
 	// Setting explicit Content-Type to avoid mime-type sniffing on the client
 	// (unifies behavior across gateways and web browsers)
