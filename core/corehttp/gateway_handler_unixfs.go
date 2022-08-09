@@ -1,7 +1,6 @@
 package corehttp
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"github.com/wumansgy/goEncrypt"
@@ -78,10 +77,15 @@ func (i *gatewayHandler) serveUnixFS(ctx context.Context, w http.ResponseWriter,
 			}
 			// Setting explicit Content-Type to avoid mime-type sniffing on the client
 			// (unifies behavior across gateways and web browsers)
+			w.Header().Set("Accept-Ranges","none")
 			w.Header().Set("Content-Type", ctype)
 			w.Header().Set("Content-Length", strconv.FormatInt(size, 10))
-			_, err = io.Copy(w, bytes.NewBuffer(cryptText))
-			//加密文件不支持分片传
+			_, err = io.Copy(w, respFiles)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = io.WriteString(w, "Bad request")
+				return
+			}
 			return
 
 		}
