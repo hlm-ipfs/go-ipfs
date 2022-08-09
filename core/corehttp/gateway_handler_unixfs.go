@@ -80,10 +80,16 @@ func (i *gatewayHandler) serveUnixFS(ctx context.Context, w http.ResponseWriter,
 			w.Header().Set("Accept-Ranges","none")
 			w.Header().Set("Content-Type", ctype)
 			w.Header().Set("Content-Length", strconv.FormatInt(size, 10))
-			_, err = io.Copy(w, respFiles)
-			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				_, _ = io.WriteString(w, "Bad request")
+			xcontent := &lazySeeker{
+				size:   size,
+				reader: respFiles,
+			}
+			if _,err:=xcontent.Seek(0, io.SeekStart);err!=nil{
+				internalWebError(w, err)
+				return
+			}
+			if _, err = io.Copy(w, xcontent);err!=nil{
+				internalWebError(w, err)
 				return
 			}
 			return
