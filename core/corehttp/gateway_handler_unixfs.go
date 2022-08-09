@@ -79,6 +79,7 @@ func (i *gatewayHandler) serveUnixFS(ctx context.Context, w http.ResponseWriter,
 			// (unifies behavior across gateways and web browsers)
 			w.Header().Set("Accept-Ranges","none")
 			w.Header().Set("Content-Type", ctype)
+			w.WriteHeader(http.StatusOK)
 			w.Header().Set("Content-Length", strconv.FormatInt(size, 10))
 			xcontent := &lazySeeker{
 				size:   size,
