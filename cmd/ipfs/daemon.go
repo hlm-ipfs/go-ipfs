@@ -47,7 +47,6 @@ import (
 	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
 	libp2pquic "github.com/libp2p/go-libp2p/p2p/transport/quic"
 	sockets "github.com/libp2p/go-socket-activation"
-	"github.com/lucas-clemente/quic-go/qlog"
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr/net"
 	prometheus "github.com/prometheus/client_golang/prometheus"
@@ -212,7 +211,7 @@ func init() {
 	holepunch.DialTimeout = time.Second * 6
 	libp2pquic.HolePunchTimeout = time.Second * 6
 	libp2pquic.QuicConfig.HandshakeIdleTimeout = time.Second * 6
-	libp2pquic.QuicConfig.Tracer = qlog.NewTracer(libp2p.NewQuicTrace().Trace)
+	//libp2pquic.QuicConfig.Tracer = qlog.NewTracer(libp2p.NewQuicTrace().Trace)
 
 	key := "QUIC_AESECB_KEY"
 	if str, ok := os.LookupEnv(key); !ok || len(str) == 0 {
@@ -714,7 +713,7 @@ func serveHTTPApi(req *cmds.Request, cctx *oldcmds.Context) (<-chan error, error
 	// only the webui objects are allowed.
 	// if you know what you're doing, go ahead and pass --unrestricted-api.
 	unrestricted, _ := req.Options[unrestrictedApiAccessKwd].(bool)
-	gatewayOpt := corehttp.GatewayOption(false, cctx.ConfigRoot,corehttp.WebUIPaths...)
+	gatewayOpt := corehttp.GatewayOption(false, cctx.ConfigRoot, corehttp.WebUIPaths...)
 	if unrestricted {
 		gatewayOpt = corehttp.GatewayOption(true, "/ipfs", "/ipns")
 	}
@@ -856,7 +855,7 @@ func serveHTTPGateway(req *cmds.Request, cctx *oldcmds.Context) (<-chan error, e
 	var opts = []corehttp.ServeOption{
 		corehttp.MetricsCollectionOption("gateway"),
 		corehttp.HostnameOption(),
-		corehttp.GatewayOption(writable, cctx.ConfigRoot,"/ipfs", "/ipns"),
+		corehttp.GatewayOption(writable, cctx.ConfigRoot, "/ipfs", "/ipns"),
 		corehttp.VersionOption(),
 		corehttp.CheckVersionOption(),
 		corehttp.CommandsROOption(cmdctx),
@@ -1007,7 +1006,7 @@ func serveHTTPProxy(req *cmds.Request, cctx *oldcmds.Context) error {
 	if err != nil {
 		return fmt.Errorf("serveHTTPProxy: ConstructNode() failed: %s", err)
 	}
-    upload, err := ma.NewMultiaddr("/ip4/127.0.0.1/tcp/5001")
+	upload, err := ma.NewMultiaddr("/ip4/127.0.0.1/tcp/5001")
 	if err != nil {
 		return err
 	}
