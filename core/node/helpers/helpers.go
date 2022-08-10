@@ -3,7 +3,7 @@ package helpers
 import (
 	"context"
 
-	"github.com/libp2p/go-libp2p/p2p/net/swarm"
+	"github.com/libp2p/go-libp2p-core/network"
 	"go.uber.org/fx"
 )
 
@@ -15,8 +15,7 @@ type MetricsCtx context.Context
 // wrong way
 func LifecycleCtx(mctx MetricsCtx, lc fx.Lifecycle) context.Context {
 	ctx, cancel := context.WithCancel(mctx)
-	//ctx = network.WithUseTransient(ctx, "test")
-	ctx = swarm.WithoutV2Relay(ctx)
+	ctx = network.WithUseTransient(ctx, "test")
 	lc.Append(fx.Hook{
 		OnStop: func(_ context.Context) error {
 			cancel()

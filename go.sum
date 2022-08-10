@@ -550,8 +550,8 @@ github.com/hashicorp/memberlist v0.1.3/go.mod h1:ajVTdAv/9Im8oMAAj5G31PhhMCZJV2p
 github.com/hashicorp/serf v0.8.2/go.mod h1:6hOLApaqBFA1NXqRQAsxw9QxuDEvNxSQRwA/JwenrHc=
 github.com/hlm-ipfs/go-ipfs-cmds v0.8.2-0.20220519061433-77febabb5ef4 h1:rdjcqmoXzmy8cTz3qjZ8g3/y+qRtFGqrgilmPudtJH4=
 github.com/hlm-ipfs/go-ipfs-cmds v0.8.2-0.20220519061433-77febabb5ef4/go.mod h1:y0bflH6m4g6ary4HniYt98UqbrVnRxmRarzeMdLIUn0=
-github.com/hlm-ipfs/go-libp2p v0.20.2-0.20220809034012-3a9b0e1ffac2 h1:6uuypSn5H3zINS9o3RdJAkV8Ddrz1pc2cGdybMYfw6A=
-github.com/hlm-ipfs/go-libp2p v0.20.2-0.20220809034012-3a9b0e1ffac2/go.mod h1:6/qUmEtlCwmidcjsBibPJTpEV9fJxyRigQ9ZX+nY5qQ=
+github.com/hlm-ipfs/go-libp2p v0.20.2-0.20220728025249-8c459a1dc831 h1:cy3PfFh+4KBVVM5SE6DiYDSVfEAIKZk5XOX+qkUb9sA=
+github.com/hlm-ipfs/go-libp2p v0.20.2-0.20220728025249-8c459a1dc831/go.mod h1:6/qUmEtlCwmidcjsBibPJTpEV9fJxyRigQ9ZX+nY5qQ=
 github.com/hlm-ipfs/ipfs-probe v0.0.0-20220727021710-525f712d47fa h1:e+a7S+l+R0B10UDbKVrDOW0i77oAHh5hqHRARbAO3Ig=
 github.com/hlm-ipfs/ipfs-probe v0.0.0-20220727021710-525f712d47fa/go.mod h1:uIbnS4zcxwsbXsw74++o1ocBl7lItcaCEZ8gjN1x9gY=
 github.com/hlm-ipfs/quic-go v0.27.1-0.20220728031410-5b14f35e1db1 h1:P7aYY6kjjbLpOnPv90Erwj70FKy2g1TZX9ju8nh9EMU=
