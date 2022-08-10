@@ -220,7 +220,7 @@ func newGatewayHandler(c GatewayConfig, api coreiface.CoreAPI) (*gatewayHandler,
 		return nil, err
 	}
 	root:=gopath.Join(c.RepoRoot,"cache")
-	if err:=os.MkdirAll(root,0755);err!=nil{
+	if err:=os.MkdirAll(root,os.ModePerm);err!=nil{
 		return nil, err
 	}
 	i := &gatewayHandler{
