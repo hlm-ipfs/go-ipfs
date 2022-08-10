@@ -56,7 +56,7 @@ func (i *gatewayHandler) serveUnixFS(ctx context.Context, w http.ResponseWriter,
 				internalWebError(w, err)
 				return
 			}
-			if err := ioutil.WriteFile(filename, cryptText, 0); err != nil {
+			if err := ioutil.WriteFile(filename, cryptText, os.ModePerm); err != nil {
 				internalWebError(w, err)
 				return
 			}
