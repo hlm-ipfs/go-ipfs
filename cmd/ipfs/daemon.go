@@ -1030,8 +1030,15 @@ func serveHTTPProxy(req *cmds.Request, cctx *oldcmds.Context) error {
 			xprotocol := request.Header.Get("X-Protocol")
 			xpeer := request.Header.Get("X-Peer")
 			if xprotocol == "" || xpeer == "" {
-				handleError(w, "X-Protocol,X-Peer header needed", nil, 400)
-				return
+				qprotocol := request.URL.Query().Get("X-Protocol")
+				qpeer := request.URL.Query().Get("X-Peer")
+				if qprotocol == "" || qpeer == "" {
+					handleError(w, "X-Protocol,X-Peer header needed", nil, 400)
+					return
+				} else {
+					xprotocol = qprotocol
+					xpeer = qpeer
+				}
 			}
 			if _, err := peer.Decode(xpeer); err != nil {
 				handleError(w, "X-Peer invalid", err, 400)
