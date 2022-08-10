@@ -16,7 +16,6 @@ import (
 	"os"
 	"runtime"
 	"sort"
-	"strings"
 	"sync"
 	"time"
 
@@ -1040,7 +1039,6 @@ func serveHTTPProxy(req *cmds.Request, cctx *oldcmds.Context) error {
 				return
 			}
 			request.Host = "" // Let URL's Host take precedence.
-			request.URL.Path = strings.TrimLeft(request.RequestURI,"/")
 			target, err := url.Parse(fmt.Sprintf("libp2p://%s", xpeer))
 			if err != nil {
 				handleError(w, "failed to parse url", err, 400)
