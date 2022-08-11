@@ -18,8 +18,8 @@ type filtersConnectionGater ma.Filters
 var _ connmgr.ConnectionGater = (*filtersConnectionGater)(nil)
 
 func (f *filtersConnectionGater) InterceptAddrDial(p peer.ID, addr ma.Multiaddr) (allow bool) {
-	rv1 := strings.HasPrefix(p.String(), "Qm")               //v1中继
-	if rv1 && !strings.Contains(natInfo.Type, "Symmetric") { //对称nat才连接v1中继
+	rv1 := strings.HasPrefix(p.String(), "Qm")                                        //v1中继
+	if rv1 && len(natInfo.Type) > 0 && !strings.Contains(natInfo.Type, "Symmetric") { //对称nat才连接v1中继
 		return false
 	}
 
