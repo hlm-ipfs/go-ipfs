@@ -6,14 +6,16 @@ package corehttp
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
-	"github.com/ipfs/kubo/auth"
 	"net"
 	"net/http"
 	"time"
 
 	logging "github.com/ipfs/go-log"
+	"github.com/ipfs/kubo/auth"
 	core "github.com/ipfs/kubo/core"
+	ttls "github.com/ipfs/kubo/tls"
 	"github.com/jbenet/goprocess"
 	periodicproc "github.com/jbenet/goprocess/periodic"
 	ma "github.com/multiformats/go-multiaddr"
@@ -61,7 +63,7 @@ func makeHandler(n *core.IpfsNode, l net.Listener, options ...ServeOption) (http
 			return
 		}
 		//添加鉴权
-		if err:=auth.AKSKAuth(w,r);err!=nil{
+		if err := auth.AKSKAuth(w, r); err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(err.Error()))
 			return
@@ -132,10 +134,25 @@ func Serve(node *core.IpfsNode, lis net.Listener, options ...ServeOption) error 
 	server := &http.Server{
 		Handler: handler,
 	}
+	if ttls.Enable() {
+		tlsConf, err := ttls.ServerTlsConfig(true)
+		if err != nil {
+			return err
+		}
+		server = &http.Server{
+			Handler:      handler,
+			TLSConfig:    tlsConf,
+			TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
+		}
+	}
 
 	var serverError error
 	serverProc := node.Process.Go(func(p goprocess.Process) {
-		serverError = server.Serve(lis)
+		if ttls.Enable() {
+			serverError = server.ServeTLS(lis, "", "")
+		} else {
+			serverError = server.Serve(lis)
+		}
 	})
 
 	// wait for server to exit.
