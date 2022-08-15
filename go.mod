@@ -116,6 +116,7 @@ require (
 
 require (
 	github.com/benbjohnson/clock v1.3.0
+	github.com/ccding/go-stun/stun v0.0.0-20200514191101-4dc67bcdb029
 	github.com/cenkalti/backoff/v4 v4.1.3
 	github.com/ipfs/go-delegated-routing v0.3.0
 	github.com/ipfs/go-log/v2 v2.5.1
@@ -136,7 +137,6 @@ require (
 	github.com/btcsuite/btcd v0.22.1 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.1.3 // indirect
 	github.com/btcsuite/btcd/chaincfg/chainhash v1.0.1 // indirect
-	github.com/ccding/go-stun/stun v0.0.0-20200514191101-4dc67bcdb029 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/cheekybits/genny v1.0.0 // indirect
@@ -278,7 +278,7 @@ require (
 replace (
 	//github.com/ipfs/go-bitswap => github.com/hlm-ipfs/go-bitswap v0.7.0
 	github.com/ipfs/go-ipfs-cmds => github.com/hlm-ipfs/go-ipfs-cmds v0.8.2-0.20220519061433-77febabb5ef4
-	github.com/libp2p/go-libp2p => github.com/hlm-ipfs/go-libp2p v0.20.2-0.20220810135837-26ecea80c87e
+	github.com/libp2p/go-libp2p => github.com/hlm-ipfs/go-libp2p v0.20.2-0.20220815022020-a36d385da552
 	github.com/lucas-clemente/quic-go => github.com/hlm-ipfs/quic-go v0.27.1-0.20220728031410-5b14f35e1db1
 	hlm-ipfs/ipfs-probe => github.com/hlm-ipfs/ipfs-probe v0.0.0-20220727021710-525f712d47fa
 	hlm-ipfs/x => github.com/hlm-ipfs/x v0.0.0-20211202054531-0de4aa04b33d

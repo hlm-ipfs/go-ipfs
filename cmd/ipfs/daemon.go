@@ -5,9 +5,6 @@ import (
 	"errors"
 	_ "expvar"
 	"fmt"
-	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/libp2p/go-libp2p-core/protocol"
-	p2phttp "github.com/libp2p/go-libp2p-http"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -22,7 +19,9 @@ import (
 	"hlm-ipfs/x/infras"
 
 	multierror "github.com/hashicorp/go-multierror"
-
+	cmds "github.com/ipfs/go-ipfs-cmds"
+	mprome "github.com/ipfs/go-metrics-prometheus"
+	options "github.com/ipfs/interface-go-ipfs-core/options"
 	version "github.com/ipfs/kubo"
 	utilmain "github.com/ipfs/kubo/cmd/ipfs/util"
 	oldcmds "github.com/ipfs/kubo/commands"
@@ -38,11 +37,11 @@ import (
 	fsrepo "github.com/ipfs/kubo/repo/fsrepo"
 	"github.com/ipfs/kubo/repo/fsrepo/migrations"
 	"github.com/ipfs/kubo/repo/fsrepo/migrations/ipfsfetcher"
-
-	cmds "github.com/ipfs/go-ipfs-cmds"
-	mprome "github.com/ipfs/go-metrics-prometheus"
-	options "github.com/ipfs/interface-go-ipfs-core/options"
 	goprocess "github.com/jbenet/goprocess"
+	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/libp2p/go-libp2p-core/protocol"
+	p2phttp "github.com/libp2p/go-libp2p-http"
+	"github.com/libp2p/go-libp2p/p2p/net/swarm"
 	"github.com/libp2p/go-libp2p/p2p/protocol/holepunch"
 	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
 	libp2pquic "github.com/libp2p/go-libp2p/p2p/transport/quic"
@@ -212,6 +211,7 @@ func init() {
 	libp2pquic.HolePunchTimeout = time.Second * 6
 	libp2pquic.QuicConfig.HandshakeIdleTimeout = time.Second * 6
 	//libp2pquic.QuicConfig.Tracer = qlog.NewTracer(libp2p.NewQuicTrace().Trace)
+	swarm.WithDialDelay(time.Second * 6)
 
 	key := "QUIC_AESECB_KEY"
 	if str, ok := os.LookupEnv(key); !ok || len(str) == 0 {
