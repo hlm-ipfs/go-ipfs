@@ -3,6 +3,7 @@ package p2p
 import (
 	"context"
 	"fmt"
+	ttls "github.com/ipfs/kubo/tls"
 
 	net "github.com/libp2p/go-libp2p-core/network"
 	protocol "github.com/libp2p/go-libp2p-core/protocol"
@@ -46,7 +47,11 @@ func (p2p *P2P) ForwardRemote(ctx context.Context, proto protocol.ID, addr ma.Mu
 }
 
 func (l *remoteListener) handleStream(remote net.Stream) {
-	local, err := manet.Dial(l.addr)
+	tlsConf, err := ttls.ClientTlsConfig()
+	if err != nil {
+		return
+	}
+	local, err := manet.DialTLS(l.addr,tlsConf)
 	if err != nil {
 		_ = remote.Reset()
 		return

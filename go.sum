@@ -552,6 +552,8 @@ github.com/hlm-ipfs/go-ipfs-cmds v0.8.2-0.20220815040255-2e38fe8eb835 h1:3XwvMzc
 github.com/hlm-ipfs/go-ipfs-cmds v0.8.2-0.20220815040255-2e38fe8eb835/go.mod h1:y0bflH6m4g6ary4HniYt98UqbrVnRxmRarzeMdLIUn0=
 github.com/hlm-ipfs/go-libp2p v0.20.2-0.20220815022020-a36d385da552 h1:yWLkb0UCJ6CXHPWE6Djigl1sL8EU6uGS/u7jKsEJrhQ=
 github.com/hlm-ipfs/go-libp2p v0.20.2-0.20220815022020-a36d385da552/go.mod h1:6/qUmEtlCwmidcjsBibPJTpEV9fJxyRigQ9ZX+nY5qQ=
+github.com/hlm-ipfs/go-multiaddr v0.0.0-20220815094343-30408cc4f6a3 h1:+r14hLS5BLymHKw56dD/XUFf8AZdz7pUqPbFK3gY1DA=
+github.com/hlm-ipfs/go-multiaddr v0.0.0-20220815094343-30408cc4f6a3/go.mod h1:F4IpaKZuPP360tOMn2Tpyu0At8w23aRyVqeK0DbFeGM=
 github.com/hlm-ipfs/ipfs-probe v0.0.0-20220727021710-525f712d47fa h1:e+a7S+l+R0B10UDbKVrDOW0i77oAHh5hqHRARbAO3Ig=
 github.com/hlm-ipfs/ipfs-probe v0.0.0-20220727021710-525f712d47fa/go.mod h1:uIbnS4zcxwsbXsw74++o1ocBl7lItcaCEZ8gjN1x9gY=
 github.com/hlm-ipfs/quic-go v0.27.1-0.20220728031410-5b14f35e1db1 h1:P7aYY6kjjbLpOnPv90Erwj70FKy2g1TZX9ju8nh9EMU=
@@ -1187,21 +1189,6 @@ github.com/multiformats/go-base32 v0.0.4 h1:+qMh4a2f37b4xTNs6mqitDinryCI+tfO2dRV
 github.com/multiformats/go-base32 v0.0.4/go.mod h1:jNLFzjPZtp3aIARHbJRZIaPuspdH0J6q39uUM5pnABM=
 github.com/multiformats/go-base36 v0.1.0 h1:JR6TyF7JjGd3m6FbLU2cOxhC0Li8z8dLNGQ89tUg4F4=
 github.com/multiformats/go-base36 v0.1.0/go.mod h1:kFGE83c6s80PklsHO9sRn2NCoffoRdUUOENyW/Vv6sM=
-github.com/multiformats/go-multiaddr v0.0.1/go.mod h1:xKVEak1K9cS1VdmPZW3LSIb6lgmoS58qz/pzqmAxV44=
-github.com/multiformats/go-multiaddr v0.0.2/go.mod h1:xKVEak1K9cS1VdmPZW3LSIb6lgmoS58qz/pzqmAxV44=
-github.com/multiformats/go-multiaddr v0.0.4/go.mod h1:xKVEak1K9cS1VdmPZW3LSIb6lgmoS58qz/pzqmAxV44=
-github.com/multiformats/go-multiaddr v0.1.0/go.mod h1:xKVEak1K9cS1VdmPZW3LSIb6lgmoS58qz/pzqmAxV44=
-github.com/multiformats/go-multiaddr v0.1.1/go.mod h1:aMKBKNEYmzmDmxfX88/vz+J5IU55txyt0p4aiWVohjo=
-github.com/multiformats/go-multiaddr v0.2.0/go.mod h1:0nO36NvPpyV4QzvTLi/lafl2y95ncPj0vFwVF6k6wJ4=
-github.com/multiformats/go-multiaddr v0.2.1/go.mod h1:s/Apk6IyxfvMjDafnhJgJ3/46z7tZ04iMk5wP4QMGGE=
-github.com/multiformats/go-multiaddr v0.2.2/go.mod h1:NtfXiOtHvghW9KojvtySjH5y0u0xW5UouOmQQrn6a3Y=
-github.com/multiformats/go-multiaddr v0.3.0/go.mod h1:dF9kph9wfJ+3VLAaeBqo9Of8x4fJxp6ggJGteB8HQTI=
-github.com/multiformats/go-multiaddr v0.3.1/go.mod h1:uPbspcUPd5AfaP6ql3ujFY+QWzmBD8uLLL4bXW0XfGc=
-github.com/multiformats/go-multiaddr v0.3.3/go.mod h1:lCKNGP1EQ1eZ35Za2wlqnabm9xQkib3fyB+nZXHLag0=
-github.com/multiformats/go-multiaddr v0.4.0/go.mod h1:YcpyLH8ZPudLxQlemYBPhSm0/oCXAT8Z4mzFpyoPyRc=
-github.com/multiformats/go-multiaddr v0.4.1/go.mod h1:3afI9HfVW8csiF8UZqtpYRiDyew8pRX7qLIGHu9FLuM=
-github.com/multiformats/go-multiaddr v0.5.0 h1:i/JuOoVg4szYQ4YEzDGtb2h0o8M7CG/Yq6cGlcjWZpM=
-github.com/multiformats/go-multiaddr v0.5.0/go.mod h1:3KAxNkUqLTJ20AAwN4XVX4kZar+bR+gh4zgbfr3SNug=
 github.com/multiformats/go-multiaddr-dns v0.0.1/go.mod h1:9kWcqw/Pj6FwxAwW38n/9403szc57zJPs45fmnznu3Q=
 github.com/multiformats/go-multiaddr-dns v0.3.0/go.mod h1:mNzQ4eTGDg0ll1N9jKPOUogZPoJ30W8a7zk66FQPpdQ=
 github.com/multiformats/go-multiaddr-dns v0.3.1 h1:QgQgR+LQVt3NPTjbrLLpsaT2ufAA2y0Mkk+QRVJbW3A=
@@ -1211,7 +1198,6 @@ github.com/multiformats/go-multiaddr-fmt v0.1.0/go.mod h1:hGtDIW4PU4BqJ50gW2quDu
 github.com/multiformats/go-multiaddr-net v0.0.1/go.mod h1:nw6HSxNmCIQH27XPGBuX+d1tnvM7ihcFwHMSstNAVUU=
 github.com/multiformats/go-multiaddr-net v0.1.1/go.mod h1:5JNbcfBOP4dnhoZOv10JJVkJO0pCCEf8mTnipAo2UZQ=
 github.com/multiformats/go-multiaddr-net v0.1.4/go.mod h1:ilNnaM9HbmVFqsb/qcNysjCu4PVONlrBZpHIrw/qQuA=
-github.com/multiformats/go-multiaddr-net v0.2.0/go.mod h1:gGdH3UXny6U3cKKYCvpXI5rnK7YaOIEOPVDI9tsJbEA=
 github.com/multiformats/go-multibase v0.0.1/go.mod h1:bja2MqRZ3ggyXtZSEDKpl0uO/gviWFaSteVbWT51qgs=
 github.com/multiformats/go-multibase v0.0.3/go.mod h1:5+1R4eQrT3PkYZ24C3W2Ue2tPwIdYQD509ZjSb5y9Oc=
 github.com/multiformats/go-multibase v0.1.0 h1:+cr9718eEwFIUxPP7sQmixYYhD4sRrU9aMXqYb+0diE=
@@ -1244,8 +1230,6 @@ github.com/multiformats/go-multistream v0.2.2/go.mod h1:UIcnm7Zuo8HKG+HkWgfQsGL+
 github.com/multiformats/go-multistream v0.3.1/go.mod h1:ODRoqamLUsETKS9BNcII4gcRsJBU5VAwRIv7O39cEXg=
 github.com/multiformats/go-multistream v0.3.3 h1:d5PZpjwRgVlbwfdTDjife7XszfZd8KYWfROYFlGcR8o=
 github.com/multiformats/go-multistream v0.3.3/go.mod h1:ODRoqamLUsETKS9BNcII4gcRsJBU5VAwRIv7O39cEXg=
-github.com/multiformats/go-varint v0.0.1/go.mod h1:3Ls8CIEsrijN6+B7PbrXRPxHRPuXSrVKRY101jdMZYE=
-github.com/multiformats/go-varint v0.0.2/go.mod h1:3Ls8CIEsrijN6+B7PbrXRPxHRPuXSrVKRY101jdMZYE=
 github.com/multiformats/go-varint v0.0.5/go.mod h1:3Ls8CIEsrijN6+B7PbrXRPxHRPuXSrVKRY101jdMZYE=
 github.com/multiformats/go-varint v0.0.6 h1:gk85QWKxh3TazbLxED/NlDVv8+q+ReFJk7Y2W/KhfNY=
 github.com/multiformats/go-varint v0.0.6/go.mod h1:3Ls8CIEsrijN6+B7PbrXRPxHRPuXSrVKRY101jdMZYE=

@@ -2,9 +2,13 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	_ "expvar"
 	"fmt"
+	ttls "github.com/ipfs/kubo/tls"
+	"github.com/libp2p/go-libp2p-core/protocol"
+	p2phttp "github.com/libp2p/go-libp2p-http"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -39,8 +43,6 @@ import (
 	"github.com/ipfs/kubo/repo/fsrepo/migrations/ipfsfetcher"
 	goprocess "github.com/jbenet/goprocess"
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/libp2p/go-libp2p-core/protocol"
-	p2phttp "github.com/libp2p/go-libp2p-http"
 	"github.com/libp2p/go-libp2p/p2p/net/swarm"
 	"github.com/libp2p/go-libp2p/p2p/protocol/holepunch"
 	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
@@ -1055,10 +1057,29 @@ func serveHTTPProxy(req *cmds.Request, cctx *oldcmds.Context) error {
 			proxy.Transport = rt
 			proxy.ServeHTTP(w, request)
 		})
-		err=http.ListenAndServe(":8082", mux)
-		if err!=nil{
-			log.Error(err)
-			return
+		if ttls.Enable() {
+			tlsConf, err := ttls.ServerTlsConfig(true)
+			if err != nil {
+				log.Error(err)
+				return
+			}
+			server := &http.Server{
+				Addr: ":8082",
+				Handler:      mux,
+				TLSConfig:    tlsConf,
+				TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
+			}
+			err=server.ListenAndServeTLS("","")
+			if err!=nil{
+				log.Error(err)
+				return
+			}
+		}else {
+			err=http.ListenAndServe(":8082", mux)
+			if err!=nil{
+				log.Error(err)
+				return
+			}
 		}
 	}()
 	return nil
