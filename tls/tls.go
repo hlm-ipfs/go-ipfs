@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	_ "embed"
 	"errors"
+	cmdhttp "github.com/ipfs/go-ipfs-cmds/http"
 	"os"
 	"strings"
 )
@@ -27,7 +28,15 @@ func Enable() bool {
 	}
 	return true
 }
-
+func init()  {
+	if Enable() {
+		tlsConf,err:=ClientTlsConfig()
+		if err!=nil{
+			panic(err)
+		}
+		cmdhttp.TLSConfig=tlsConf
+	}
+}
 func ServerTlsConfig(clientAuth bool) (*tls.Config, error) {
 	if len(ServerKey) == 0 || len(ServerPem) == 0 {
 		return nil, errors.New("server cert invalid")
@@ -50,6 +59,26 @@ func ServerTlsConfig(clientAuth bool) (*tls.Config, error) {
 		}
 		conf.ClientCAs = clientCertPool
 		conf.ClientAuth = tls.RequireAndVerifyClientCert
+	}
+	return conf, nil
+}
+func ClientTlsConfig() (*tls.Config, error) {
+	if len(ClientPem) == 0 || len(ClientKey) == 0 {
+		return nil, errors.New("client cert invalid")
+	}
+	cert, err := tls.X509KeyPair([]byte(ClientPem), []byte(ClientKey))
+	if err != nil {
+		return nil, err
+	}
+	clientCertPool := x509.NewCertPool()
+	ok := clientCertPool.AppendCertsFromPEM([]byte(ClientPem))
+	if !ok {
+		return nil, errors.New("failed to parse root certificate")
+	}
+	conf := &tls.Config{
+		RootCAs:            clientCertPool,
+		Certificates:       []tls.Certificate{cert},
+		InsecureSkipVerify: true,
 	}
 	return conf, nil
 }
