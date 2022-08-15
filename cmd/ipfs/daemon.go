@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	_ "expvar"
 	"fmt"
+	ttls "github.com/ipfs/kubo/tls"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -1055,7 +1057,30 @@ func serveHTTPProxy(req *cmds.Request, cctx *oldcmds.Context) error {
 			proxy.Transport = rt
 			proxy.ServeHTTP(w, request)
 		})
-		http.ListenAndServe(":8082", mux)
+		if ttls.Enable() {
+			tlsConf, err := ttls.ServerTlsConfig(true)
+			if err != nil {
+				log.Error(err)
+				return
+			}
+			server := &http.Server{
+				Addr: ":8082",
+				Handler:      mux,
+				TLSConfig:    tlsConf,
+				TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
+			}
+			err=server.ListenAndServeTLS("","")
+			if err!=nil{
+				log.Error(err)
+				return
+			}
+		}else {
+			err=http.ListenAndServe(":8082", mux)
+			if err!=nil{
+				log.Error(err)
+				return
+			}
+		}
 	}()
 	return nil
 }
