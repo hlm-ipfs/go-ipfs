@@ -1,6 +1,7 @@
 package libp2p
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/ccding/go-stun/stun"
@@ -35,13 +36,14 @@ var (
 	natInfo = &NatInfo{}
 )
 
-func init() {
-	/*if info := CheckNat(); info != nil {
+func InitNatInfo() {
+	if info := CheckNat(); info != nil {
 		natInfo = info
-	}*/
+	}
 }
 
 func CheckNat() *NatInfo {
+	fmt.Println("check nat info...")
 	c := stun.NewClient()
 	c.SetServerAddr("stun.stunprotocol.org:3478")
 	nat, host, err := c.Discover()

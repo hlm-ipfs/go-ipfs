@@ -5,9 +5,10 @@ import (
 	"crypto/x509"
 	_ "embed"
 	"errors"
-	cmdhttp "github.com/ipfs/go-ipfs-cmds/http"
 	"os"
 	"strings"
+
+	cmdhttp "github.com/ipfs/go-ipfs-cmds/http"
 )
 
 //go:embed server.key
@@ -22,21 +23,23 @@ var ClientKey string
 //go:embed client.pem
 var ClientPem string
 
+func init() {
+	if Enable() {
+		tlsConf, err := ClientTlsConfig()
+		if err != nil {
+			panic(err)
+		}
+		cmdhttp.TLSConfig = tlsConf
+	}
+}
+
 func Enable() bool {
 	if str, ok := os.LookupEnv("IPFS_DisableTls"); ok && strings.ToLower(str) == "true" {
 		return false
 	}
 	return true
 }
-func init()  {
-	if Enable() {
-		tlsConf,err:=ClientTlsConfig()
-		if err!=nil{
-			panic(err)
-		}
-		cmdhttp.TLSConfig=tlsConf
-	}
-}
+
 func ServerTlsConfig(clientAuth bool) (*tls.Config, error) {
 	if len(ServerKey) == 0 || len(ServerPem) == 0 {
 		return nil, errors.New("server cert invalid")
@@ -62,6 +65,7 @@ func ServerTlsConfig(clientAuth bool) (*tls.Config, error) {
 	}
 	return conf, nil
 }
+
 func ClientTlsConfig() (*tls.Config, error) {
 	if len(ClientPem) == 0 || len(ClientKey) == 0 {
 		return nil, errors.New("client cert invalid")

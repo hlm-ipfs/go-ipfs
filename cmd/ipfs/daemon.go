@@ -233,6 +233,8 @@ func defaultMux(path string) corehttp.ServeOption {
 }
 
 func daemonFunc(req *cmds.Request, re cmds.ResponseEmitter, env cmds.Environment) (_err error) {
+	libp2p.InitNatInfo()
+
 	// Inject metrics before we do anything
 	err := mprome.Inject()
 	if err != nil {
@@ -1064,19 +1066,19 @@ func serveHTTPProxy(req *cmds.Request, cctx *oldcmds.Context) error {
 				return
 			}
 			server := &http.Server{
-				Addr: ":8082",
+				Addr:         ":8082",
 				Handler:      mux,
 				TLSConfig:    tlsConf,
 				TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
 			}
-			err=server.ListenAndServeTLS("","")
-			if err!=nil{
+			err = server.ListenAndServeTLS("", "")
+			if err != nil {
 				log.Error(err)
 				return
 			}
-		}else {
-			err=http.ListenAndServe(":8082", mux)
-			if err!=nil{
+		} else {
+			err = http.ListenAndServe(":8082", mux)
+			if err != nil {
 				log.Error(err)
 				return
 			}
