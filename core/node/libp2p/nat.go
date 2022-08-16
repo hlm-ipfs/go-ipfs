@@ -36,9 +36,9 @@ var (
 )
 
 func init() {
-	if info := CheckNat(); info != nil {
+	/*if info := CheckNat(); info != nil {
 		natInfo = info
-	}
+	}*/
 }
 
 func CheckNat() *NatInfo {
