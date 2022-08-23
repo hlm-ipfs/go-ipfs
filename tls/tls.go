@@ -34,7 +34,7 @@ func init() {
 }
 
 func Enable() bool {
-	if str, ok := os.LookupEnv("IPFS_DisableTls"); ok && strings.ToLower(str) == "true" {
+	if str, ok := os.LookupEnv("IPFS_DisableTls"); ok && strings.ToLower(str) == "false" {
 		return false
 	}
 	return true

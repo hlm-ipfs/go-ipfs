@@ -37,9 +37,11 @@ var (
 )
 
 func InitNatInfo() {
+	/*
 	if info := CheckNat(); info != nil {
 		natInfo = info
 	}
+	 */
 }
 
 func CheckNat() *NatInfo {
