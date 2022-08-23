@@ -47,16 +47,27 @@ func (p2p *P2P) ForwardRemote(ctx context.Context, proto protocol.ID, addr ma.Mu
 }
 
 func (l *remoteListener) handleStream(remote net.Stream) {
-	tlsConf, err := ttls.ClientTlsConfig()
-	if err != nil {
-		return
+	var (
+		local manet.Conn
+		err   error
+	)
+	if ttls.Enable() {
+		tlsConf, err := ttls.ClientTlsConfig()
+		if err != nil {
+			return
+		}
+		local, err = manet.DialTLS(l.addr, tlsConf)
+		if err != nil {
+			_ = remote.Reset()
+			return
+		}
+	} else {
+		local, err = manet.Dial(l.addr)
+		if err != nil {
+			_ = remote.Reset()
+			return
+		}
 	}
-	local, err := manet.DialTLS(l.addr,tlsConf)
-	if err != nil {
-		_ = remote.Reset()
-		return
-	}
-
 	peer := remote.Conn().RemotePeer()
 
 	if l.reportRemote {
