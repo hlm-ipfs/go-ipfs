@@ -5,9 +5,6 @@ import (
 	"crypto/x509"
 	_ "embed"
 	"errors"
-	"os"
-	"strings"
-
 	cmdhttp "github.com/ipfs/go-ipfs-cmds/http"
 )
 
@@ -34,10 +31,11 @@ func init() {
 }
 
 func Enable() bool {
-	if str, ok := os.LookupEnv("IPFS_DisableTls"); ok && strings.ToLower(str) == "true" {
+	/*if str, ok := os.LookupEnv("IPFS_DisableTls"); ok && strings.ToLower(str) == "true" {
 		return false
 	}
-	return true
+	return true*/
+	return false
 }
 
 func ServerTlsConfig(clientAuth bool) (*tls.Config, error) {
