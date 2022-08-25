@@ -34,7 +34,7 @@ func init() {
 }
 
 func Enable() bool {
-	if str, ok := os.LookupEnv("IPFS_DisableTls"); ok && strings.ToLower(str) == "false" {
+	if str, ok := os.LookupEnv("IPFS_DisableTls"); ok && strings.ToLower(str) == "true" {
 		return false
 	}
 	return true
@@ -49,7 +49,7 @@ func ServerTlsConfig(clientAuth bool) (*tls.Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	conf := &tls.Config{Certificates: []tls.Certificate{cert}}
+	conf := &tls.Config{Certificates: []tls.Certificate{cert},MaxVersion: tls.VersionTLS12}
 	if clientAuth {
 		if len(ClientKey) == 0 || len(ClientPem) == 0 {
 			return nil, errors.New("client cert invalid")
@@ -83,6 +83,7 @@ func ClientTlsConfig() (*tls.Config, error) {
 		RootCAs:            clientCertPool,
 		Certificates:       []tls.Certificate{cert},
 		InsecureSkipVerify: true,
+		MaxVersion: tls.VersionTLS12,
 	}
 	return conf, nil
 }
