@@ -554,8 +554,8 @@ github.com/hlm-ipfs/go-libp2p v0.20.2-0.20220815022020-a36d385da552 h1:yWLkb0UCJ
 github.com/hlm-ipfs/go-libp2p v0.20.2-0.20220815022020-a36d385da552/go.mod h1:6/qUmEtlCwmidcjsBibPJTpEV9fJxyRigQ9ZX+nY5qQ=
 github.com/hlm-ipfs/go-multiaddr v0.0.0-20220815094343-30408cc4f6a3 h1:+r14hLS5BLymHKw56dD/XUFf8AZdz7pUqPbFK3gY1DA=
 github.com/hlm-ipfs/go-multiaddr v0.0.0-20220815094343-30408cc4f6a3/go.mod h1:F4IpaKZuPP360tOMn2Tpyu0At8w23aRyVqeK0DbFeGM=
-github.com/hlm-ipfs/ipfs-probe v0.0.0-20220727021710-525f712d47fa h1:e+a7S+l+R0B10UDbKVrDOW0i77oAHh5hqHRARbAO3Ig=
-github.com/hlm-ipfs/ipfs-probe v0.0.0-20220727021710-525f712d47fa/go.mod h1:uIbnS4zcxwsbXsw74++o1ocBl7lItcaCEZ8gjN1x9gY=
+github.com/hlm-ipfs/ipfs-probe v0.0.0-20220919024326-e7e7f9541c19 h1:qwpZ+EufR2nBGG6xdisajBDIPj7atJmBNwmFxk4Riqc=
+github.com/hlm-ipfs/ipfs-probe v0.0.0-20220919024326-e7e7f9541c19/go.mod h1:uIbnS4zcxwsbXsw74++o1ocBl7lItcaCEZ8gjN1x9gY=
 github.com/hlm-ipfs/quic-go v0.27.1-0.20220728031410-5b14f35e1db1 h1:P7aYY6kjjbLpOnPv90Erwj70FKy2g1TZX9ju8nh9EMU=
 github.com/hlm-ipfs/quic-go v0.27.1-0.20220728031410-5b14f35e1db1/go.mod h1:aS1faU3PFY9fHS/CwubWA2JNMsaSvTJDjBCLAMDFKDY=
 github.com/hlm-ipfs/x v0.0.0-20211202054531-0de4aa04b33d h1:8LwqY86TlIQ6zlbUobQ6d/qbRDWai4qejrcbcgNf4iM=

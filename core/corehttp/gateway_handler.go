@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"mime"
 	"net/http"
 	"net/textproto"
@@ -222,6 +223,10 @@ func newGatewayHandler(c GatewayConfig, api coreiface.CoreAPI) (*gatewayHandler,
 	root:=gopath.Join(c.RepoRoot,"cache")
 	if err:=os.MkdirAll(root,os.ModePerm);err!=nil{
 		return nil, err
+	}
+	dir, err := ioutil.ReadDir(root)
+	for _, d := range dir {
+		os.RemoveAll(path.Join([]string{root, d.Name()}))
 	}
 	i := &gatewayHandler{
 		cache:      root,
