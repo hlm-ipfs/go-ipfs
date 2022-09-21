@@ -280,7 +280,7 @@ replace (
 	github.com/libp2p/go-libp2p => github.com/hlm-ipfs/go-libp2p v0.20.2-0.20220815022020-a36d385da552
 	github.com/lucas-clemente/quic-go => github.com/hlm-ipfs/quic-go v0.27.1-0.20220728031410-5b14f35e1db1
 	github.com/multiformats/go-multiaddr => github.com/hlm-ipfs/go-multiaddr v0.0.0-20220815094343-30408cc4f6a3
-	hlm-ipfs/ipfs-probe => github.com/hlm-ipfs/ipfs-probe v0.0.0-20220919024326-e7e7f9541c19
+	hlm-ipfs/ipfs-probe => github.com/hlm-ipfs/ipfs-probe v0.0.0-20220921103048-e2ff673c34cb
 	hlm-ipfs/x => github.com/hlm-ipfs/x v0.0.0-20211202054531-0de4aa04b33d
 )
 
