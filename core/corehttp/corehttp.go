@@ -46,13 +46,11 @@ func makeHandler(n *core.IpfsNode, l net.Listener, options ...ServeOption) (http
 			return nil, err
 		}
 	}
+
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// ServeMux does not support requests with CONNECT method,
 		// so we need to handle them separately
 		// https://golang.org/src/net/http/request.go#L111
-		if r.Header.Get("Authorization") == "" && auth.DefaultAuthorization != "" {
-			r.Header.Set("Authorization", auth.DefaultAuthorization)
-		}
 		SetHeaders(w, r)
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusNoContent)
@@ -63,9 +61,9 @@ func makeHandler(n *core.IpfsNode, l net.Listener, options ...ServeOption) (http
 			return
 		}
 		//添加鉴权
-		if err := auth.AKSKAuth(w, r); err != nil {
+		if err := auth.Authorization(n, r); err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(err.Error()))
+			w.Write([]byte("authorization failed ,"+err.Error()))
 			return
 		}
 		topMux.ServeHTTP(w, r)
