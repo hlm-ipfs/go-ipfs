@@ -18,7 +18,12 @@ import (
 	"time"
 )
 
-
+const (
+	ErrBadArguments int = 10000+iota
+	ErrTokenExists
+	ErrTokenNotExists
+	ErrTokenNotVerify
+)
 // TokenCmd  小盒子访问令牌管理功能
 var TokenCmd = &cmds.Command{
 	Helptext: cmds.HelpText{
@@ -54,7 +59,11 @@ var createTokenCmd = &cmds.Command{
 	Run: func(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environment) error {
 		//参数解析, 持久化，返回
 		if len(req.Arguments) < 3 {
-			return fmt.Errorf("expecting three arguments: client_id, public_key and token")
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: "expecting three arguments: client_id, public_key and token",
+				Code:    ErrBadArguments,
+			})
 		}
 		client_id := req.Arguments[0]
 		public_key := req.Arguments[1]
@@ -63,20 +72,36 @@ var createTokenCmd = &cmds.Command{
 		var newJsonToken paseto.JSONToken
 		var newFooter string
 		if client_id == "" {
-			return fmt.Errorf("illegal parameter client id need non empty string")
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: "illegal parameter client id need non empty string",
+				Code:    ErrBadArguments,
+			})
 		}
 		tokenBytes, err := hex.DecodeString(token)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		publicKeyBytes, err := hex.DecodeString(public_key)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		publicKey := ed25519.PublicKey(publicKeyBytes)
 		err = paseto.NewV2().Verify(string(tokenBytes), publicKey, &newJsonToken, &newFooter)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrTokenNotVerify,
+			})
 		}
 		//返回给客户端的code码
 		code := fmt.Sprintf("%s:%s", GetRandomString(6), client_id)
@@ -92,36 +117,68 @@ var createTokenCmd = &cmds.Command{
 
 		cfgRoot, err := cmdenv.GetConfigRoot(env)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		r, err := fsrepo.Open(cfgRoot)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		defer r.Close()
 
 		if err := req.ParseBodyArgs(); err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		valBytes, err := json.Marshal(val)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		exists, err := r.Datastore().Has(req.Context, key)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		if exists {
-			return fmt.Errorf("token exists,please refresh")
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: "token exists,please refresh",
+				Code:    ErrTokenExists,
+			})
 		}
 		err = r.Datastore().Put(req.Context, key, valBytes)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		//code 进行非对称加密
 		PublicKey, err := auth.DecodePublicKey([]byte(auth.PublicPem))
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		//GenRsaKeyFile("box")
 		encryptedBytes, err := rsa.EncryptOAEP(
@@ -131,7 +188,11 @@ var createTokenCmd = &cmds.Command{
 			[]byte(code),
 			nil)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		return cmds.EmitOnce(res, &TokenOutput{
 			Data: hex.EncodeToString(encryptedBytes),
@@ -161,7 +222,11 @@ var refreshTokenCmd = &cmds.Command{
 	Run: func(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environment) error {
 		//参数解析, 持久化，返回
 		if len(req.Arguments) < 3 {
-			return fmt.Errorf("expecting three arguments: client_id, public_key and token")
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message:"expecting three arguments: client_id, public_key and token",
+				Code:    ErrBadArguments,
+			})
 		}
 		client_id := req.Arguments[0]
 		public_key := req.Arguments[1]
@@ -170,20 +235,36 @@ var refreshTokenCmd = &cmds.Command{
 		var newJsonToken paseto.JSONToken
 		var newFooter string
 		if client_id == "" {
-			return fmt.Errorf("illegal parameter client id need non empty string")
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: "illegal parameter client id need non empty string",
+				Code:    ErrBadArguments,
+			})
 		}
 		tokenBytes, err := hex.DecodeString(token)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		publicKeyBytes, err := hex.DecodeString(public_key)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		publicKey := ed25519.PublicKey(publicKeyBytes)
 		err = paseto.NewV2().Verify(string(tokenBytes), publicKey, &newJsonToken, &newFooter)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrTokenNotVerify,
+			})
 		}
 		//返回给客户端的code码
 		code := fmt.Sprintf("%s:%s", GetRandomString(6), client_id)
@@ -199,36 +280,68 @@ var refreshTokenCmd = &cmds.Command{
 
 		cfgRoot, err := cmdenv.GetConfigRoot(env)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		r, err := fsrepo.Open(cfgRoot)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		defer r.Close()
 
 		if err := req.ParseBodyArgs(); err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		valBytes, err := json.Marshal(val)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		exists, err := r.Datastore().Has(req.Context, key)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		if !exists {
-			return fmt.Errorf("token not exists,please create")
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: "token not exists,please create",
+				Code:    ErrTokenNotExists,
+			})
 		}
 		err = r.Datastore().Put(req.Context, key, valBytes)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		//code 进行非对称加密
 		PublicKey, err := auth.DecodePublicKey([]byte(auth.PublicPem))
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		//GenRsaKeyFile("box")
 		encryptedBytes, err := rsa.EncryptOAEP(
@@ -238,7 +351,11 @@ var refreshTokenCmd = &cmds.Command{
 			[]byte(code),
 			nil)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		return cmds.EmitOnce(res, &TokenOutput{
 			Data: hex.EncodeToString(encryptedBytes),
@@ -266,7 +383,11 @@ var revokeTokenCmd = &cmds.Command{
 	Run: func(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environment) error {
 		//参数解析, 持久化，返回
 		if len(req.Arguments) < 1 {
-			return fmt.Errorf("expecting one arguments: client_id")
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: "expecting one arguments: client_id",
+				Code:    ErrBadArguments,
+			})
 		}
 		client_id := req.Arguments[0]
 
@@ -275,20 +396,36 @@ var revokeTokenCmd = &cmds.Command{
 
 		cfgRoot, err := cmdenv.GetConfigRoot(env)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		r, err := fsrepo.Open(cfgRoot)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		defer r.Close()
 
 		if err := req.ParseBodyArgs(); err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		err = r.Datastore().Delete(req.Context, key)
 		if err != nil {
-			return err
+			return cmds.EmitOnce(res, &TokenOutput{
+				Data:    "",
+				Message: err.Error(),
+				Code:    ErrBadArguments,
+			})
 		}
 		return nil
 	},
@@ -309,5 +446,7 @@ func GetRandomString(n int) string {
 
 // TokenOutput 根据状态码 400就是错误，200就是正常返回
 type TokenOutput struct {
-	Data string `json:"data"`
+	Data    string `json:"data"`
+	Message string `json:"message"`
+	Code    int    `json:"code"`
 }
