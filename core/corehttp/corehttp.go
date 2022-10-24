@@ -62,7 +62,7 @@ func makeHandler(n *core.IpfsNode, l net.Listener, options ...ServeOption) (http
 		}
 		//添加鉴权
 		if err := auth.Authorization(n, r); err != nil {
-			w.WriteHeader(http.StatusUnauthorized)
+			w.WriteHeader(http.StatusForbidden)
 			w.Write([]byte("authorization failed ,"+err.Error()))
 			return
 		}
