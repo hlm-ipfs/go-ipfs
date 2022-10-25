@@ -60,7 +60,7 @@ may also specify the level of compression by specifying '-l=<1-9>'.
 		cmds.BoolOption(compressOptionName, "C", "Compress the output with GZIP compression."),
 		cmds.IntOption(compressionLevelOptionName, "l", "The level of compression (1-9)."),
 		cmds.BoolOption(progressOptionName, "p", "Stream progress data.").WithDefault(true),
-		cmds.StringOption(decryptPassword, "password from file", "解密密码"),
+		cmds.StringOption(decryptPassword, "P", "password"),
 	},
 	PreRun: func(req *cmds.Request, env cmds.Environment) error {
 		_, err := getCompressOptions(req)
@@ -77,7 +77,16 @@ may also specify the level of compression by specifying '-l=<1-9>'.
 		if err != nil {
 			return err
 		}
-
+		cleanPath := make([]string, 0)
+		defer func() {
+			for _, tmpPath := range cleanPath {
+				os.RemoveAll(tmpPath)
+			}
+		}()
+		cfgRoot, err := cmdenv.GetConfigRoot(env)
+		if err != nil {
+			return err
+		}
 		p := path.New(req.Arguments[0])
 		pr, err := api.ResolvePath(req.Context, p)
 		if err != nil {
@@ -98,25 +107,58 @@ may also specify the level of compression by specifying '-l=<1-9>'.
 			return err
 		}
 		password, _ := req.Options[decryptPassword].(string)
-		if len(password)>0 {
-			switch f :=  file.(type){
+		if len(password) > 0 {
+			switch f := file.(type) {
 			case files.File:
-				old, err := ioutil.ReadAll(f)
-				if err != nil {
-					return err
+				if len(password) == 6 {
+					decrypt := func() error {
+						defer func() {
+							if err := recover(); err != nil {
+								panic(err)
+							}
+						}()
+						inFilePath := filepath.Join(cfgRoot, pr.Cid().String()+".enc")
+						outFilePath := filepath.Join(cfgRoot, pr.Cid().String())
+						cleanPath = append(cleanPath, inFilePath, outFilePath)
+						inFile, err := os.OpenFile(inFilePath, os.O_RDWR|os.O_CREATE, 0644)
+						if err != nil {
+							return err
+						}
+						_, err = io.Copy(inFile, f)
+						if err != nil {
+							return err
+						}
+						inFile.Close()
+						err = auth.DecryptBigFile(inFilePath, outFilePath, []byte(password))
+						if err != nil {
+							return err
+						}
+						cryptText, err := ioutil.ReadFile(outFilePath)
+						file = files.NewBytesFile([]byte(cryptText))
+						return nil
+					}
+					if err := decrypt(); err != nil {
+						return err
+					}
+				} else {
+					old, err := ioutil.ReadAll(f)
+					if err != nil {
+						return err
+					}
+					cryptText, err := goEncrypt.DesCbcDecrypt(old, []byte(password), []byte("wumansgy")) //解密得到密文,可以自己传入初始化向量,如果不传就使用默认的初始化向量,8字节
+					if err != nil {
+						return err
+					}
+					file = files.NewBytesFile([]byte(cryptText))
 				}
-				cryptText, err := goEncrypt.DesCbcDecrypt(old, []byte(password),[]byte("wumansgy")) //解密得到密文,可以自己传入初始化向量,如果不传就使用默认的初始化向量,8字节
-				if err != nil {
-					return  err
-				}
-				file= files.NewBytesFile([]byte(cryptText))
+			default:
+				fmt.Println("xx")
 			}
 		}
 		size, err := file.Size()
 		if err != nil {
 			return err
 		}
-
 		res.SetLength(uint64(size))
 
 		archive, _ := req.Options[archiveOptionName].(bool)

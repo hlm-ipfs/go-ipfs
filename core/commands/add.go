@@ -5,11 +5,12 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
+	"github.com/ipfs/kubo/auth"
 	"io"
-	"io/ioutil"
 	"math/big"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/ipfs/kubo/core/commands/cmdenv"
@@ -20,17 +21,16 @@ import (
 	coreiface "github.com/ipfs/interface-go-ipfs-core"
 	"github.com/ipfs/interface-go-ipfs-core/options"
 	mh "github.com/multiformats/go-multihash"
-	"github.com/wumansgy/goEncrypt"
 )
 
 // ErrDepthLimitExceeded indicates that the max depth has been exceeded.
 var ErrDepthLimitExceeded = fmt.Errorf("depth limit exceeded")
 
 type AddEvent struct {
-	Name  string
-	Hash  string `json:",omitempty"`
-	Bytes int64  `json:",omitempty"`
-	Size  string `json:",omitempty"`
+	Name     string
+	Hash     string `json:",omitempty"`
+	Bytes    int64  `json:",omitempty"`
+	Size     string `json:",omitempty"`
 	Password string
 }
 
@@ -196,7 +196,16 @@ only-hash, and progress/status related flags) will change the final hash.
 		if !ok {
 			return fmt.Errorf("unrecognized hash function: %s", strings.ToLower(hashFunStr))
 		}
-
+		cleanPath:=make([]string,0)
+		defer func() {
+			for _, tmpPath:=range cleanPath{
+				os.RemoveAll(tmpPath)
+			}
+		}()
+		cfgRoot, err := cmdenv.GetConfigRoot(env)
+		if err != nil {
+			return err
+		}
 		enc, err := cmdenv.GetCidEncoder(req)
 		if err != nil {
 			return err
@@ -241,7 +250,7 @@ only-hash, and progress/status related flags) will change the final hash.
 		opts = append(opts, nil) // events option placeholder
 		var password string
 		if encryptFIle {
-			password = CreateRandomNumber(8)
+			password = CreateRandomNumber(6)
 		}
 		var added int
 		addit := toadd.Entries()
@@ -250,20 +259,46 @@ only-hash, and progress/status related flags) will change the final hash.
 			errCh := make(chan error, 1)
 			events := make(chan interface{}, adderOutChanSize)
 			opts[len(opts)-1] = options.Unixfs.Events(events)
-			filesNode:=addit.Node()
+			filesNode := addit.Node()
 			if encryptFIle {
 				switch f := addit.Node().(type) {
 				case files.File:
-					old, err := ioutil.ReadAll(f)
-					if err != nil {
-						return  err
+					encryptFn := func() error {
+						inFilePath := filepath.Join(cfgRoot, addit.Name())
+						outFilePath := filepath.Join(cfgRoot, fmt.Sprintf("%+v.enc", addit.Name()))
+						cleanPath=append(cleanPath,inFilePath,outFilePath)
+						inFile, err := os.OpenFile(inFilePath, os.O_RDWR|os.O_CREATE, 0644)
+						if err != nil {
+							return err
+						}
+						_, err = io.Copy(inFile, files.ToFile(f))
+						if err != nil {
+							return err
+						}
+						err = auth.EncryptBigFile(inFilePath, outFilePath, []byte("123456"))
+						if err != nil {
+							return err
+						}
+						outFile, err := os.OpenFile(outFilePath, os.O_RDWR|os.O_CREATE, 0644)
+						if err != nil {
+							return err
+						}
+						filesNode = files.NewReaderFile(outFile)
+						return nil
 					}
+					if err := encryptFn(); err != nil {
+						return err
+					}
+					/*					old, err := ioutil.ReadAll(f)
+										if err != nil {
+											return  err
+										}
 
-					cryptText, err := goEncrypt.DesCbcEncrypt(old, []byte(password),[]byte("wumansgy")) //得到密文,可以自己传入初始化向量,如果不传就使用默认的初始化向量,8字节
-					if err != nil {
-						return  err
-					}
-					filesNode= files.NewBytesFile([]byte(cryptText))
+										cryptText, err := goEncrypt.DesCbcEncrypt(old, []byte(password),[]byte("wumansgy")) //得到密文,可以自己传入初始化向量,如果不传就使用默认的初始化向量,8字节
+										if err != nil {
+											return  err
+										}
+										filesNode= files.NewBytesFile([]byte(cryptText))*/
 				default:
 					return errors.New("not support")
 				}
@@ -298,10 +333,10 @@ only-hash, and progress/status related flags) will change the final hash.
 				}
 
 				if err := res.Emit(&AddEvent{
-					Name:  output.Name,
-					Hash:  h,
-					Bytes: output.Bytes,
-					Size:  output.Size,
+					Name:     output.Name,
+					Hash:     h,
+					Bytes:    output.Bytes,
+					Size:     output.Size,
 					Password: password,
 				}); err != nil {
 					return err
@@ -466,6 +501,7 @@ only-hash, and progress/status related flags) will change the final hash.
 	},
 	Type: AddEvent{},
 }
+
 func CreateRandomNumber(len int) string {
 	var numbers = []byte{1, 2, 3, 4, 5, 7, 8, 9}
 	var container string

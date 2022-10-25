@@ -3,8 +3,10 @@ package corehttp
 import (
 	"context"
 	"fmt"
+	"github.com/ipfs/kubo/auth"
 	"github.com/wumansgy/goEncrypt"
 	"html"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -46,24 +48,53 @@ func (i *gatewayHandler) serveUnixFS(ctx context.Context, w http.ResponseWriter,
 					return
 				}
 			}
-			old, err := ioutil.ReadAll(f)
-			if err != nil {
-				internalWebError(w, err)
-				return
+			decrypt := func() error {
+				inFilePath := filepath.Join(i.cache, resolvedPath.Cid().String()+".enc")
+				outFilePath := filepath.Join(i.cache, resolvedPath.Cid().String())
+
+				inFile, err := os.OpenFile(inFilePath, os.O_RDWR|os.O_CREATE, 0644)
+				if err != nil {
+					return err
+				}
+				defer func() {
+					inFile.Close()
+					os.RemoveAll(inFilePath)
+				}()
+				_, err = io.Copy(inFile, f)
+				if err != nil {
+					return err
+				}
+				err = auth.DecryptBigFile(inFilePath, outFilePath, []byte(password))
+				if err != nil {
+					return err
+				}
+				return nil
 			}
-			defer f.Close()
-			cryptText, err := goEncrypt.DesCbcDecrypt(old, []byte(password), []byte("wumansgy")) //解密得到密文,可以自己传入初始化向量,如果不传就使用默认的初始化向量,8字节
-			if err != nil {
-				internalWebError(w, err)
-				return
-			}
-			dir, err := ioutil.ReadDir(i.cache)
-			for _, d := range dir {
-				os.RemoveAll(path.Join([]string{i.cache, d.Name()}...))
-			}
-			if err := ioutil.WriteFile(filename, cryptText, os.ModePerm); err != nil {
-				internalWebError(w, err)
-				return
+			if len(password) == 6 {
+				if err := decrypt(); err != nil {
+					internalWebError(w, err)
+					return
+				}
+			} else {
+				old, err := ioutil.ReadAll(f)
+				if err != nil {
+					internalWebError(w, err)
+					return
+				}
+				defer f.Close()
+				cryptText, err := goEncrypt.DesCbcDecrypt(old, []byte(password), []byte("wumansgy")) //解密得到密文,可以自己传入初始化向量,如果不传就使用默认的初始化向量,8字节
+				if err != nil {
+					internalWebError(w, err)
+					return
+				}
+				dir, err := ioutil.ReadDir(i.cache)
+				for _, d := range dir {
+					os.RemoveAll(path.Join([]string{i.cache, d.Name()}...))
+				}
+				if err := ioutil.WriteFile(filename, cryptText, os.ModePerm); err != nil {
+					internalWebError(w, err)
+					return
+				}
 			}
 			if cacheFile, err := os.Open(filename); cacheFile != nil && err == nil {
 				defer cacheFile.Close()
