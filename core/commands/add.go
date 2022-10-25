@@ -275,7 +275,7 @@ only-hash, and progress/status related flags) will change the final hash.
 						if err != nil {
 							return err
 						}
-						err = auth.EncryptBigFile(inFilePath, outFilePath, []byte("123456"))
+						err = auth.EncryptBigFile(inFilePath, outFilePath, []byte(password))
 						if err != nil {
 							return err
 						}
