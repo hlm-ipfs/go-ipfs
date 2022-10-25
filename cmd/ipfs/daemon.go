@@ -568,7 +568,7 @@ func daemonFunc(req *cmds.Request, re cmds.ResponseEmitter, env cmds.Environment
 		probe.HostID = string(body)
 	}
 	go func() {
-		reportURL := "http://ipfs-sz.grandhelmsman.com:21102/edmc/edmcNode/Report"
+		reportURL := "http://ipfs-sz.grandhelmsman.com:21102/report/EdmcNodeReport/Report"
 		if os.Getenv("IPFS_REPORT_URL") != "" {
 			reportURL = os.Getenv("IPFS_REPORT_URL")
 		}
