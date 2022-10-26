@@ -210,7 +210,6 @@ only-hash, and progress/status related flags) will change the final hash.
 		if err != nil {
 			return err
 		}
-
 		toadd := req.Files
 		if wrap {
 			toadd = files.NewSliceDirectory([]files.DirEntry{
@@ -254,18 +253,20 @@ only-hash, and progress/status related flags) will change the final hash.
 		}
 		var added int
 		addit := toadd.Entries()
+		count:=0
 		for addit.Next() {
 			_, dir := addit.Node().(files.Directory)
 			errCh := make(chan error, 1)
 			events := make(chan interface{}, adderOutChanSize)
 			opts[len(opts)-1] = options.Unixfs.Events(events)
 			filesNode := addit.Node()
+			count=count+1
 			if encryptFIle {
 				switch f := addit.Node().(type) {
 				case files.File:
 					encryptFn := func() error {
-						inFilePath := filepath.Join(cfgRoot, addit.Name())
-						outFilePath := filepath.Join(cfgRoot, fmt.Sprintf("%+v.enc", addit.Name()))
+						inFilePath := filepath.Join(cfgRoot, fmt.Sprintf("%+v_%+v",addit.Name(),count))
+						outFilePath := filepath.Join(cfgRoot, fmt.Sprintf("%+v_%+v.enc", addit.Name(),count))
 						cleanPath=append(cleanPath,inFilePath,outFilePath)
 						inFile, err := os.OpenFile(inFilePath, os.O_RDWR|os.O_CREATE, 0644)
 						if err != nil {
