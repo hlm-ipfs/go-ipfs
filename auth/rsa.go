@@ -149,13 +149,22 @@ func DecodePrivateKey(pemContent []byte) (privateKey *rsa.PrivateKey, err error)
 
 // Authorization 前端收到错误中有token has expired需要向服务端重新申请
 func Authorization(n *core.IpfsNode, r *http.Request) error {
-	if r.Header.Get("x-device-code") == "" {
+	urlCode:=r.URL.Query().Get("x-device-code")
+	headCode:=r.Header.Get("x-device-code")
+	var deviceCode string
+	if len(urlCode)==0&&len(headCode)==0{
 		return nil
+	}else {
+		if len(urlCode)>0{
+			deviceCode=urlCode
+		}else if len(headCode)>0 {
+			deviceCode=headCode
+		}
 	}
 	if strings.Contains(r.RemoteAddr,"127.0.0.1") {
 		return nil
 	}
-	encryptedBytes, err := hex.DecodeString(r.Header.Get("x-device-code"))
+	encryptedBytes, err := hex.DecodeString(deviceCode)
 	if err != nil {
 		return err
 	}
