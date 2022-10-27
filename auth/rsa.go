@@ -16,6 +16,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 var (
@@ -206,6 +207,10 @@ func Authorization(n *core.IpfsNode, r *http.Request) error {
 	var newJsonToken paseto.JSONToken
 	var newFooter string
 	err = paseto.NewV2().Verify(string(tokenBytes), publicKey, &newJsonToken, &newFooter)
+	if err != nil {
+		return err
+	}
+	err=newJsonToken.Validate(paseto.ValidAt(time.Now()))
 	if err != nil {
 		return err
 	}
