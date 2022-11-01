@@ -60,10 +60,15 @@ func makeHandler(n *core.IpfsNode, l net.Listener, options ...ServeOption) (http
 			w.WriteHeader(http.StatusOK)
 			return
 		}
+		log.Info("==========================================================" + r.RequestURI)
+		fmt.Println("===================================uri=======================" + r.RequestURI)
+		fmt.Println("==================================url========================" + r.URL.Path)
+		fmt.Println("====================================header======================" + r.Header.Get("aa"))
+
 		//添加鉴权
 		if err := auth.Authorization(n, r); err != nil {
 			w.WriteHeader(http.StatusForbidden)
-			w.Write([]byte("authorization failed ,"+err.Error()))
+			w.Write([]byte("authorization failed ," + err.Error()))
 			return
 		}
 		topMux.ServeHTTP(w, r)

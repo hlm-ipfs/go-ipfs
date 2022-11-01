@@ -737,6 +737,8 @@ func serveHTTPApi(req *cmds.Request, cctx *oldcmds.Context) (<-chan error, error
 		corehttp.BlockProfileRateOption("/debug/pprof-block/"),
 		corehttp.MetricsScrapingOption("/debug/metrics/prometheus"),
 		corehttp.LogOption(),
+		corehttp.TusFiles("/files/"),
+		corehttp.TusFiles("/files"),
 	}
 
 	if len(cfg.Gateway.RootRedirect) > 0 {
