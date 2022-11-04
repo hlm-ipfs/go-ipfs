@@ -10,7 +10,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path"
 	"path/filepath"
 	"time"
 
@@ -87,10 +86,12 @@ func (i *gatewayHandler) serveUnixFS(ctx context.Context, w http.ResponseWriter,
 					internalWebError(w, err)
 					return
 				}
+				/* 先不清理缓存
 				dir, err := ioutil.ReadDir(i.cache)
 				for _, d := range dir {
 					os.RemoveAll(path.Join([]string{i.cache, d.Name()}...))
 				}
+				 */
 				if err := ioutil.WriteFile(filename, cryptText, os.ModePerm); err != nil {
 					internalWebError(w, err)
 					return
