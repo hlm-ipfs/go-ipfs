@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ipfs/kubo/core"
+	"io/ioutil"
 
 	"github.com/tus/tusd/pkg/filestore"
 	tusd "github.com/tus/tusd/pkg/handler"
@@ -17,35 +18,48 @@ import (
 func AddIpfs(path string) ServeOption {
 	return func(_ *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
 		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
-			//if r.Method != http.MethodPost {
-			//	http.Error(w, "only POST allowed", http.StatusMethodNotAllowed)
-			//	return
-			//}
-			//if err := r.ParseForm(); err != nil {
-			//	http.Error(w, err.Error(), http.StatusBadRequest)
-			//	return
-			//}
+			if r.Method != http.MethodPost {
+				http.Error(w, "only POST allowed", http.StatusMethodNotAllowed)
+				return
+			}
+			if err := r.ParseForm(); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
 			//
-			//rateStr := r.Form.Get("rate")
-			//if len(rateStr) == 0 {
-			//	http.Error(w, "parameter 'rate' must be set", http.StatusBadRequest)
-			//	return
-			//}
-			//
-			//rate, err := strconv.Atoi(rateStr)
-			//if err != nil {
-			//	http.Error(w, err.Error(), http.StatusBadRequest)
-			//	return
-			//}
+			uuid := r.Form.Get("uuid")
+			if len(uuid) == 0 {
+				http.Error(w, "parameter 'uuid' must be set", http.StatusBadRequest)
+				return
+			}
+
+			filePath := "./uploads/" + uuid
+			exist, err := PathExists(filePath)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			if !exist {
+				http.Error(w, "文件不存在.", http.StatusBadRequest)
+				return
+			}
+
+			//读取文件
+			input, err := ioutil.ReadFile(filePath + ".info")
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			var fileInfo tusd.FileInfo
+			err = json.Unmarshal(input, &fileInfo)
+			if err != nil {
+				http.Error(w, "格式化文件json报错", http.StatusBadRequest)
+				return
+			}
 			log.Infof("hello world")
 
-			var data struct {
-				Name string
-			}
-			data.Name = "hello world"
-			ret_json, _ := json.Marshal(data)
+			ret_json, _ := json.Marshal(fileInfo)
 			io.WriteString(w, string(ret_json))
-			//runtime.SetBlockProfileRate(rate)
 		})
 		return mux, nil
 	}
