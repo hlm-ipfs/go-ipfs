@@ -63,7 +63,7 @@ func AddIpfs(path string) ServeOption {
 			log.Infof("hello world")
 
 			//addIpfs
-			cmd := exec.Command("ipfs", "add "+"/sda2/test/data/"+addIpfsReq.UUID)
+			cmd := exec.Command("ipfs", "ipfs add "+"/sda2/test/data/"+addIpfsReq.UUID)
 			output, err := cmd.CombinedOutput()
 			if err != nil {
 			}
