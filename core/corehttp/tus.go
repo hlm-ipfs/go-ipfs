@@ -26,14 +26,17 @@ func AddIpfs(path string) ServeOption {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
+			s, _ := ioutil.ReadAll(r.Body) //把	body 内容读入字符串 s
+			fmt.Fprintf(w, "%s", s)        //在返回页面中显示内容。
 			//
-			uuid := r.Form.Get("uuid")
-			if len(uuid) == 0 {
-				http.Error(w, "parameter 'uuid' must be set", http.StatusBadRequest)
-				return
+			type AddIpfsReq struct {
+				UUID string `json:"uuid"`
 			}
+			var addIpfsReq AddIpfsReq
 
-			filePath := "./uploads/" + uuid
+			json.Unmarshal(s, &addIpfsReq)
+			filePath := "./uploads/" + addIpfsReq.UUID
+
 			exist, err := PathExists(filePath)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
