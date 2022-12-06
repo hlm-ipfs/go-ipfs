@@ -59,7 +59,7 @@ func AddIpfs(path string) ServeOption {
 			//	http.Error(w, "格式化文件json报错", http.StatusBadRequest)
 			//	return
 			//}
-
+			fmt.Println("=====================out========", "/sda2/test/data/"+addIpfsReq.UUID)
 			//addIpfs
 			cmd := exec.Command("ipfs", "add", "/sda2/test/data/"+addIpfsReq.UUID)
 			output, err := cmd.CombinedOutput()
