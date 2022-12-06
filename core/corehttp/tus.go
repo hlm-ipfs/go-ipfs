@@ -66,7 +66,10 @@ func AddIpfs(path string) ServeOption {
 			cmd := exec.Command("ipfs ", "add", "/sda2/test/data/"+addIpfsReq.UUID)
 			output, err := cmd.CombinedOutput()
 			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
 			}
+			fmt.Println("=====================out========", string(output))
 			io.WriteString(w, string(output))
 		})
 		return mux, nil
