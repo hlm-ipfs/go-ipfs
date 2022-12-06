@@ -60,6 +60,7 @@ func AddIpfs(path string) ServeOption {
 			//	return
 			//}
 			fmt.Println("=====================out========", "/sda2/test/data/"+addIpfsReq.UUID)
+			filePath = "/sda2/test/data/" + addIpfsReq.UUID
 			//addIpfs
 			req, err := NewfileUploadRequest("http://127.0.0.1:5001/api/v0/add?stream-channels=true&pin=false&wrap-with-directory=false&progress=false&encrypt=false", nil, "file", filePath)
 			if err != nil {
