@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/ipfs/kubo/core"
 	"io/ioutil"
+	"os/exec"
 
 	"github.com/tus/tusd/pkg/filestore"
 	tusd "github.com/tus/tusd/pkg/handler"
@@ -16,7 +17,7 @@ import (
 )
 
 func AddIpfs(path string) ServeOption {
-	return func(_ *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
+	return func(i *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
 		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 			if r.Method != http.MethodPost {
 				http.Error(w, "only POST allowed", http.StatusMethodNotAllowed)
@@ -48,21 +49,25 @@ func AddIpfs(path string) ServeOption {
 			}
 
 			//读取文件
-			input, err := ioutil.ReadFile(filePath + ".info")
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
-			}
-			var fileInfo tusd.FileInfo
-			err = json.Unmarshal(input, &fileInfo)
-			if err != nil {
-				http.Error(w, "格式化文件json报错", http.StatusBadRequest)
-				return
-			}
+			//input, err := ioutil.ReadFile(filePath + ".info")
+			//if err != nil {
+			//	http.Error(w, err.Error(), http.StatusBadRequest)
+			//	return
+			//}
+			//var fileInfo tusd.FileInfo
+			//err = json.Unmarshal(input, &fileInfo)
+			//if err != nil {
+			//	http.Error(w, "格式化文件json报错", http.StatusBadRequest)
+			//	return
+			//}
 			log.Infof("hello world")
 
-			ret_json, _ := json.Marshal(fileInfo)
-			io.WriteString(w, string(ret_json))
+			//addIpfs
+			cmd := exec.Command("ipfs", "add "+filePath)
+			output, err := cmd.CombinedOutput()
+			if err != nil {
+			}
+			io.WriteString(w, string(output))
 		})
 		return mux, nil
 	}
