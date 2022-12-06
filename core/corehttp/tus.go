@@ -145,7 +145,7 @@ func NewfileUploadRequest(uri string, params map[string]string, paramName, path 
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile(paramName, path)
+	part, err := writer.CreateFormField(path)
 	if err != nil {
 		return nil, err
 	}
