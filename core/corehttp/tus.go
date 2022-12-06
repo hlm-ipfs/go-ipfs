@@ -28,7 +28,6 @@ func AddIpfs(path string) ServeOption {
 				return
 			}
 			s, _ := ioutil.ReadAll(r.Body) //把	body 内容读入字符串 s
-			fmt.Fprintf(w, "%s", s)        //在返回页面中显示内容。
 			//
 			type AddIpfsReq struct {
 				UUID string `json:"uuid"`
@@ -60,10 +59,9 @@ func AddIpfs(path string) ServeOption {
 			//	http.Error(w, "格式化文件json报错", http.StatusBadRequest)
 			//	return
 			//}
-			log.Infof("hello world")
 
 			//addIpfs
-			cmd := exec.Command("ipfs ", "add", "/sda2/test/data/"+addIpfsReq.UUID)
+			cmd := exec.Command("ipfs", "add", "/sda2/test/data/"+addIpfsReq.UUID)
 			output, err := cmd.CombinedOutput()
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
