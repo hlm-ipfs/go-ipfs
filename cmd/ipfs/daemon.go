@@ -739,6 +739,7 @@ func serveHTTPApi(req *cmds.Request, cctx *oldcmds.Context) (<-chan error, error
 		corehttp.LogOption(),
 		corehttp.TusFiles("/files/"),
 		corehttp.TusFiles("/files"),
+		corehttp.AddIpfs("/addIpfs"),
 	}
 
 	if len(cfg.Gateway.RootRedirect) > 0 {

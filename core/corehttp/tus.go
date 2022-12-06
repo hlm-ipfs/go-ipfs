@@ -14,7 +14,7 @@ import (
 	"path/filepath"
 )
 
-func HelloWorld(path string) ServeOption {
+func AddIpfs(path string) ServeOption {
 	return func(_ *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
 		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 			//if r.Method != http.MethodPost {
@@ -53,7 +53,6 @@ func HelloWorld(path string) ServeOption {
 
 func TusFiles(path string) ServeOption {
 	return func(node *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
-
 		storePath := "./uploads"
 		if ex, err := os.Executable(); err == nil {
 			storePath = filepath.Dir(ex) + "/uploads"
