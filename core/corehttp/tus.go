@@ -1,15 +1,15 @@
 package corehttp
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/ipfs/kubo/core"
-	"io/ioutil"
-	"os/exec"
-
 	"github.com/tus/tusd/pkg/filestore"
 	tusd "github.com/tus/tusd/pkg/handler"
 	"io"
+	"io/ioutil"
+	"mime/multipart"
 	"net"
 	"net/http"
 	"os"
@@ -61,14 +61,20 @@ func AddIpfs(path string) ServeOption {
 			//}
 			fmt.Println("=====================out========", "/sda2/test/data/"+addIpfsReq.UUID)
 			//addIpfs
-			cmd := exec.Command("ipfs", "add", "/sda2/test/data/"+addIpfsReq.UUID)
-			output, err := cmd.CombinedOutput()
+			req, err := NewfileUploadRequest("http://127.0.0.1:5001/api/v0/add?stream-channels=true&pin=false&wrap-with-directory=false&progress=false&encrypt=false", nil, "file", filePath)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
-			fmt.Println("=====================out========", string(output))
-			io.WriteString(w, string(output))
+			client := &http.Client{}
+			resp, err := client.Do(req)
+			defer resp.Body.Close()
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			io.WriteString(w, string(body))
 		})
 		return mux, nil
 	}
@@ -126,4 +132,32 @@ func PathExists(path string) (bool, error) {
 		return false, nil
 	}
 	return false, err //如果有错误了，但是不是不存在的错误，所以把这个错误原封不动的返回
+}
+
+//
+func NewfileUploadRequest(uri string, params map[string]string, paramName, path string) (*http.Request, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile(paramName, path)
+	if err != nil {
+		return nil, err
+	}
+	_, err = io.Copy(part, file)
+
+	for key, val := range params {
+		_ = writer.WriteField(key, val)
+	}
+	err = writer.Close()
+	if err != nil {
+		return nil, err
+	}
+	request, err := http.NewRequest("POST", uri, body)
+	request.Header.Set("Content-Type", writer.FormDataContentType())
+	return request, err
 }
