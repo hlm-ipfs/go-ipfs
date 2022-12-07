@@ -13,8 +13,9 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"path/filepath"
 )
+
+var TusUploadPath string = "/mnt/tus/uploads"
 
 func AddIpfs(path string) ServeOption {
 	return func(i *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
@@ -60,7 +61,7 @@ func AddIpfs(path string) ServeOption {
 			//	http.Error(w, "格式化文件json报错", http.StatusBadRequest)
 			//	return
 			//}
-			filePath = "/sda2/test/data/" + addIpfsReq.UUID
+			filePath = TusUploadPath + "/" + addIpfsReq.UUID
 			if len(addIpfsReq.Encrypt) == 0 {
 				addIpfsReq.Encrypt = "false"
 			}
@@ -79,6 +80,10 @@ func AddIpfs(path string) ServeOption {
 				return
 			}
 			io.WriteString(w, string(body))
+			//删除文件
+			os.Remove(filePath)
+			os.Remove(filePath + ".info")
+
 		})
 		return mux, nil
 	}
@@ -86,11 +91,11 @@ func AddIpfs(path string) ServeOption {
 
 func TusFiles(path string) ServeOption {
 	return func(node *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
-		storePath := "./uploads"
-		if ex, err := os.Executable(); err == nil {
-			storePath = filepath.Dir(ex) + "/uploads"
-		}
-		fmt.Println("===storePath=====", storePath)
+		storePath := TusUploadPath
+		//if ex, err := os.Executable(); err == nil {
+		//	storePath = filepath.Dir(ex) + "/uploads"
+		//}
+		//fmt.Println("===storePath=====", storePath)
 		b, err := PathExists(storePath)
 		if !b {
 			os.Mkdir(storePath, 0777)
