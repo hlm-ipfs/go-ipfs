@@ -15,7 +15,7 @@ import (
 	"os"
 )
 
-var TusUploadPath string = "/mnt/tus/uploads"
+var TusUploadPath string = "/data/ipfs/tus/uploads"
 
 func AddIpfs(path string) ServeOption {
 	return func(i *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
