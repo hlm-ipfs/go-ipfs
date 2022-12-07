@@ -121,7 +121,7 @@ func AddIpfs(path string) ServeOption {
 			}
 			url := "http://127.0.0.1:5001/api/v0/add?stream-channels=true&pin=false&wrap-with-directory=false&progress=false&encrypt=" + addIpfsReq.Encrypt
 			if len(addIpfsReq.Password) > 0 {
-				url = url + "&password=" + addIpfsReq.Password
+				url = url + "&passwd=" + addIpfsReq.Password
 			}
 			//addIpfs
 			req, err := NewfileUploadRequest(url, nil, "file", filePath)
