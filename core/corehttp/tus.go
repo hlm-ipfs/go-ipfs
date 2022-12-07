@@ -100,7 +100,15 @@ func AddIpfs(path string) ServeOption {
 			}
 			returnMap["code"] = "200"
 			returnMap["message"] = "success"
-			returnMap["data"] = body
+			type AddResp struct {
+				Name     string `json:"Name"`
+				Hash     string `json:"Hash"`
+				Size     string `json:"Size"`
+				Password string `json:"Password"`
+			}
+			var dataResp AddResp
+			json.Unmarshal(body, &dataResp)
+			returnMap["data"] = dataResp
 
 			reByte, _ := json.Marshal(returnMap)
 			io.WriteString(w, string(reByte))
