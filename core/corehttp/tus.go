@@ -20,7 +20,7 @@ var TusUploadPath string = "/mnt/tus/uploads"
 func AddIpfs(path string) ServeOption {
 	return func(i *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
 		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
-			returnMap := make(map[string]string)
+			returnMap := make(map[string]interface{})
 			if r.Method != http.MethodPost {
 				returnMap["code"] = "500"
 				returnMap["message"] = "only POST allowed"
@@ -100,7 +100,7 @@ func AddIpfs(path string) ServeOption {
 			}
 			returnMap["code"] = "200"
 			returnMap["message"] = "success"
-			returnMap["data"] = string(body)
+			returnMap["data"] = body
 
 			reByte, _ := json.Marshal(returnMap)
 			io.WriteString(w, string(reByte))
