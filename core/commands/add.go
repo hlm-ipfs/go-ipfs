@@ -53,6 +53,7 @@ const (
 	inlineLimitOptionName = "inline-limit"
 	headersOptionName     = "headers"
 	encryptEnable         = "encrypt"
+	passwordCmd           = "password"
 )
 
 const adderOutChanSize = 8
@@ -150,6 +151,7 @@ only-hash, and progress/status related flags) will change the final hash.
 		cmds.IntOption(inlineLimitOptionName, "Maximum block size to inline. (experimental)").WithDefault(32),
 		cmds.BoolOption(headersOptionName, "v", "Print table headers (Hash, Size, Name)."),
 		cmds.BoolOption(encryptEnable, "secret from file", "加密."),
+		cmds.StringOption(passwordCmd, "password", "密码."),
 	},
 	PreRun: func(req *cmds.Request, env cmds.Environment) error {
 		quiet, _ := req.Options[quietOptionName].(bool)
@@ -191,14 +193,15 @@ only-hash, and progress/status related flags) will change the final hash.
 		hashFunStr, _ := req.Options[hashOptionName].(string)
 		inline, _ := req.Options[inlineOptionName].(bool)
 		inlineLimit, _ := req.Options[inlineLimitOptionName].(int)
+		passwordStr, _ := req.Options[passwordCmd].(string)
 
 		hashFunCode, ok := mh.Names[strings.ToLower(hashFunStr)]
 		if !ok {
 			return fmt.Errorf("unrecognized hash function: %s", strings.ToLower(hashFunStr))
 		}
-		cleanPath:=make([]string,0)
+		cleanPath := make([]string, 0)
 		defer func() {
-			for _, tmpPath:=range cleanPath{
+			for _, tmpPath := range cleanPath {
 				os.RemoveAll(tmpPath)
 			}
 		}()
@@ -250,24 +253,27 @@ only-hash, and progress/status related flags) will change the final hash.
 		var password string
 		if encryptFIle {
 			password = CreateRandomNumber(6)
+			if len(passwordStr) > 0 {
+				password = passwordStr
+			}
 		}
 		var added int
 		addit := toadd.Entries()
-		count:=0
+		count := 0
 		for addit.Next() {
 			_, dir := addit.Node().(files.Directory)
 			errCh := make(chan error, 1)
 			events := make(chan interface{}, adderOutChanSize)
 			opts[len(opts)-1] = options.Unixfs.Events(events)
 			filesNode := addit.Node()
-			count=count+1
+			count = count + 1
 			if encryptFIle {
 				switch f := addit.Node().(type) {
 				case files.File:
 					encryptFn := func() error {
-						inFilePath := filepath.Join(cfgRoot, fmt.Sprintf("%+v_%+v",addit.Name(),count))
-						outFilePath := filepath.Join(cfgRoot, fmt.Sprintf("%+v_%+v.enc", addit.Name(),count))
-						cleanPath=append(cleanPath,inFilePath,outFilePath)
+						inFilePath := filepath.Join(cfgRoot, fmt.Sprintf("%+v_%+v", addit.Name(), count))
+						outFilePath := filepath.Join(cfgRoot, fmt.Sprintf("%+v_%+v.enc", addit.Name(), count))
+						cleanPath = append(cleanPath, inFilePath, outFilePath)
 						inFile, err := os.OpenFile(inFilePath, os.O_RDWR|os.O_CREATE, 0644)
 						if err != nil {
 							return err
