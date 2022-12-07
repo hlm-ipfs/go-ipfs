@@ -17,6 +17,42 @@ import (
 
 var TusUploadPath string = "/data/ipfs/tus/uploads"
 
+func CancelUpload(path string) ServeOption {
+	return func(i *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
+		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+			returnMap := make(map[string]interface{})
+			if r.Method != http.MethodPost {
+				returnMap["code"] = "500"
+				returnMap["message"] = "only POST allowed"
+				reByte, _ := json.Marshal(returnMap)
+				http.Error(w, string(reByte), http.StatusMethodNotAllowed)
+				return
+			}
+			if err := r.ParseForm(); err != nil {
+				returnMap["code"] = "500"
+				returnMap["message"] = err.Error()
+				reByte, _ := json.Marshal(returnMap)
+				http.Error(w, string(reByte), http.StatusMethodNotAllowed)
+				return
+			}
+			s, _ := ioutil.ReadAll(r.Body) //把	body 内容读入字符串 s
+			//
+			type AddIpfsReq struct {
+				UUID string `json:"uuid"`
+			}
+			var addIpfsReq AddIpfsReq
+
+			json.Unmarshal(s, &addIpfsReq)
+			filePath := TusUploadPath + "/" + addIpfsReq.UUID
+			//删除文件
+			os.Remove(filePath)
+			os.Remove(filePath + ".info")
+
+		})
+		return mux, nil
+	}
+}
+
 func AddIpfs(path string) ServeOption {
 	return func(i *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
 		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
