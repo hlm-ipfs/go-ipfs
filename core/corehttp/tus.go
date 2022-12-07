@@ -47,6 +47,10 @@ func CancelUpload(path string) ServeOption {
 			//删除文件
 			os.Remove(filePath)
 			os.Remove(filePath + ".info")
+			returnMap["code"] = "200"
+			returnMap["message"] = "success."
+			reByte, _ := json.Marshal(returnMap)
+			io.WriteString(w, string(reByte))
 
 		})
 		return mux, nil
