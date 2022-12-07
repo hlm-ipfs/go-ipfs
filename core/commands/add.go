@@ -53,7 +53,7 @@ const (
 	inlineLimitOptionName = "inline-limit"
 	headersOptionName     = "headers"
 	encryptEnable         = "encrypt"
-	passwordCmd           = "password"
+	passwordCmd           = "passwd"
 )
 
 const adderOutChanSize = 8
