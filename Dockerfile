@@ -2,18 +2,20 @@
 FROM  registry.cn-hangzhou.aliyuncs.com/ipfs2021/go-ipfs:base
 LABEL maintainer="Steven Allen <steven@stebalien.com>"
 # Create the fs-repo directory and switch to a non-privileged user.
+USER root
 ENV IPFS_PATH /data/ipfs
 # Create mount points for `ipfs mount` command
 # Expose the fs-repo as a volume.
 # start_ipfs initializes an fs-repo if none is mounted.
 # Important this happens after the USER directive so permissions are correct.
 VOLUME $IPFS_PATH
-ENV LIBP2P_FORCE_PNET 1
+#ENV LIBP2P_FORCE_PNET 1
 # The default logging level
 ENV IPFS_LOGGING ""
+#ENV QUIC_AESECB_KEY "album_unwind_fret1111"
 # Get the ipfs binary, entrypoint script, and TLS CAs from the build container.
 COPY  ./bin/ipfs /usr/local/bin/ipfs
-COPY  ./bin/swarm.key /etc/ipfs/swarm.key
+#COPY  ./bin/swarm.key /etc/ipfs/swarm.key
 # This shared lib (part of glibc) doesn't seem to be included with busybox.
 # Swarm TCP; should be exposed to the public
 EXPOSE 4001
@@ -25,12 +27,12 @@ EXPOSE 5001
 EXPOSE 8080
 # Swarm Websockets; must be exposed publicly when the node is listening using the websocket transport (/ipX/.../tcp/8081/ws).
 EXPOSE 8081
-#proxy server port
 EXPOSE 8082
 # This just makes sure that:
 # 1. There's an fs-repo, and initializes one if there isn't.
 # 2. The API and Gateway are accessible from outside the container.
 ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/start_ipfs"]
-
+#RUN mkdir -p /data/ipfs/tus/uploads
+#RUN chown ipfs:users /data/ipfs/tus /data/ipfs/tus/uploads 
 # Execute the daemon subcommand by default
 CMD ["daemon", "--migrate=true", "--agent-version-suffix=docker"]
