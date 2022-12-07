@@ -20,12 +20,19 @@ var TusUploadPath string = "/mnt/tus/uploads"
 func AddIpfs(path string) ServeOption {
 	return func(i *core.IpfsNode, _ net.Listener, mux *http.ServeMux) (*http.ServeMux, error) {
 		mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+			returnMap := make(map[string]string)
 			if r.Method != http.MethodPost {
-				http.Error(w, "only POST allowed", http.StatusMethodNotAllowed)
+				returnMap["code"] = "500"
+				returnMap["message"] = "only POST allowed"
+				reByte, _ := json.Marshal(returnMap)
+				http.Error(w, string(reByte), http.StatusMethodNotAllowed)
 				return
 			}
 			if err := r.ParseForm(); err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
+				returnMap["code"] = "500"
+				returnMap["message"] = err.Error()
+				reByte, _ := json.Marshal(returnMap)
+				http.Error(w, string(reByte), http.StatusMethodNotAllowed)
 				return
 			}
 			s, _ := ioutil.ReadAll(r.Body) //把	body 内容读入字符串 s
@@ -41,11 +48,17 @@ func AddIpfs(path string) ServeOption {
 
 			exist, err := PathExists(filePath)
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
+				returnMap["code"] = "500"
+				returnMap["message"] = err.Error()
+				reByte, _ := json.Marshal(returnMap)
+				http.Error(w, string(reByte), http.StatusMethodNotAllowed)
 				return
 			}
 			if !exist {
-				http.Error(w, "文件不存在.", http.StatusBadRequest)
+				returnMap["code"] = "500"
+				returnMap["message"] = "文件不存在."
+				reByte, _ := json.Marshal(returnMap)
+				http.Error(w, string(reByte), http.StatusMethodNotAllowed)
 				return
 			}
 
@@ -68,7 +81,10 @@ func AddIpfs(path string) ServeOption {
 			//addIpfs
 			req, err := NewfileUploadRequest("http://127.0.0.1:5001/api/v0/add?stream-channels=true&pin=false&wrap-with-directory=false&progress=false&encrypt="+addIpfsReq.Encrypt, nil, "file", filePath)
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
+				returnMap["code"] = "500"
+				returnMap["message"] = err.Error()
+				reByte, _ := json.Marshal(returnMap)
+				http.Error(w, string(reByte), http.StatusMethodNotAllowed)
 				return
 			}
 			client := &http.Client{}
@@ -76,10 +92,18 @@ func AddIpfs(path string) ServeOption {
 			defer resp.Body.Close()
 			body, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
+				returnMap["code"] = "500"
+				returnMap["message"] = err.Error()
+				reByte, _ := json.Marshal(returnMap)
+				http.Error(w, string(reByte), http.StatusMethodNotAllowed)
 				return
 			}
-			io.WriteString(w, string(body))
+			returnMap["code"] = "200"
+			returnMap["message"] = "success"
+			returnMap["data"] = string(body)
+
+			reByte, _ := json.Marshal(returnMap)
+			io.WriteString(w, string(reByte))
 			//删除文件
 			os.Remove(filePath)
 			os.Remove(filePath + ".info")
