@@ -30,7 +30,8 @@ func AddIpfs(path string) ServeOption {
 			s, _ := ioutil.ReadAll(r.Body) //把	body 内容读入字符串 s
 			//
 			type AddIpfsReq struct {
-				UUID string `json:"uuid"`
+				UUID    string `json:"uuid"`
+				Encrypt string `json:"encrypt"`
 			}
 			var addIpfsReq AddIpfsReq
 
@@ -60,8 +61,11 @@ func AddIpfs(path string) ServeOption {
 			//	return
 			//}
 			filePath = "/sda2/test/data/" + addIpfsReq.UUID
+			if len(addIpfsReq.Encrypt) == 0 {
+				addIpfsReq.Encrypt = "false"
+			}
 			//addIpfs
-			req, err := NewfileUploadRequest("http://127.0.0.1:5001/api/v0/add?stream-channels=true&pin=false&wrap-with-directory=false&progress=false&encrypt=false", nil, "file", filePath)
+			req, err := NewfileUploadRequest("http://127.0.0.1:5001/api/v0/add?stream-channels=true&pin=false&wrap-with-directory=false&progress=false&encrypt="+addIpfsReq.Encrypt, nil, "file", filePath)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
