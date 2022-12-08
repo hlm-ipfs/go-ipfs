@@ -80,7 +80,7 @@ func AddIpfs(path string) ServeOption {
 			type AddIpfsReq struct {
 				UUID     string `json:"uuid"`
 				Encrypt  string `json:"encrypt"`
-				Password string `json:"password"`
+				Password string `json:"passwd"`
 			}
 			var addIpfsReq AddIpfsReq
 
