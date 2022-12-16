@@ -175,15 +175,15 @@ func TusFiles(path string) ServeOption {
 		//fmt.Println("===storePath=====", storePath)
 		b, err := PathExists(storePath)
 		if !b {
-			fmt.Println("===========================mkdir path " + storePath)
+			fmt.Println("===========================1mkdir path " + storePath)
 			err = os.Mkdir(storePath, 0777)
 			if err != nil {
-				fmt.Errorf("os mkdir" + storePath + "====err " + err.Error())
+				fmt.Println("os mkdir" + storePath + "====err " + err.Error())
 			}
 			// 再修改权限
 			err = os.Chmod(storePath, 0777)
 			if err != nil {
-				fmt.Errorf("os Chmod" + storePath + "====err " + err.Error())
+				fmt.Println("os Chmod" + storePath + "====err " + err.Error())
 			}
 		}
 
