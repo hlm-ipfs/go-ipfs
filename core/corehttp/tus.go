@@ -176,7 +176,7 @@ func TusFiles(path string) ServeOption {
 		b, err := PathExists(storePath)
 		if !b {
 			fmt.Println("===========================1mkdir path " + storePath)
-			err = os.Mkdir(storePath, 0777)
+			err = os.MkdirAll(storePath, 0777)
 			if err != nil {
 				fmt.Println("os mkdir" + storePath + "====err " + err.Error())
 			}
